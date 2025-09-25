@@ -1,0 +1,29 @@
+# Ignorar archivos de pruebas
+prueba.py
+
+# Ignorar carpeta con documentos internos
+Documentos flujo existente/
+
+# Archivos de Office
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.pdf
+
+# Archivos de Python que no son necesarios en Git
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Entornos virtuales
+.env
+.venv/
+env/
+venv/
+
+# Archivos de configuración de IDEs y sistema
+.DS_Store
+.idea/
+.vscode/
+
