@@ -10,6 +10,8 @@ Documentos flujo existente/
 *.xls
 *.xlsx
 *.pdf
+*.png
+*.svg
 
 # Archivos de Python que no son necesarios en Git
 __pycache__/

@@ -121,8 +121,6 @@ class FeasibilityState:
             )
         ]
         self.next_id = 3
-        self.current_user = "Ana García"
-        self.current_department = Department.SALES.value
         self.filter_status = "Todos"
         self.filter_priority = "Todas"
         self.search_term = ""
@@ -160,8 +158,8 @@ class FeasibilityState:
         for project in self.projects:
             if project.id == project_id:
                 new_comment = {
-                    "author": self.current_user,
-                    "department": self.current_department,
+                    "author": "Usuario del Sistema",
+                    "department": "Sistema",
                     "comment": comment,
                     "date": datetime.datetime.now().strftime("%Y-%m-%d")
                 }
@@ -174,6 +172,12 @@ state = FeasibilityState()
 
 # Global modal reference for better management
 current_modal = None
+
+# Global project list reference for updates
+project_list_ref = None
+
+# Global statistics reference for updates
+stats_row_ref = None
 
 def force_close_all_modals(page: ft.Page):
     """Emergency function to close all modals and clear overlays"""
@@ -191,23 +195,23 @@ def force_close_all_modals(page: ft.Page):
 def create_project_card(project: ProjectInfo, page: ft.Page):
     def get_status_color(status: str):
         colors = {
-            ProjectStatus.NEW.value: ft.Colors.BLUE,
-            ProjectStatus.UNDER_REVIEW.value: ft.Colors.ORANGE,
-            ProjectStatus.FEASIBLE.value: ft.Colors.GREEN,
-            ProjectStatus.NOT_FEASIBLE.value: ft.Colors.RED,
-            ProjectStatus.APPROVED.value: ft.Colors.GREEN,
-            ProjectStatus.REJECTED.value: ft.Colors.RED
+            ProjectStatus.NEW.value: "#4A90E2",  # Modern blue
+            ProjectStatus.UNDER_REVIEW.value: "#F5A623",  # Warm orange
+            ProjectStatus.FEASIBLE.value: "#00BFA5",  # Teal/cyan
+            ProjectStatus.NOT_FEASIBLE.value: "#E53E3E",  # Modern red
+            ProjectStatus.APPROVED.value: "#00BFA5",  # Teal/cyan
+            ProjectStatus.REJECTED.value: "#E53E3E"  # Modern red
         }
-        return colors.get(status, ft.Colors.GREY)
+        return colors.get(status, "#9B9B9B")  # Light grey
 
     def get_priority_color(priority: str):
         colors = {
-            Priority.LOW.value: ft.Colors.GREEN,
-            Priority.MEDIUM.value: ft.Colors.BLUE,
-            Priority.HIGH.value: ft.Colors.ORANGE,
-            Priority.CRITICAL.value: ft.Colors.RED
+            Priority.LOW.value: "#00BFA5",  # Teal/cyan
+            Priority.MEDIUM.value: "#4A90E2",  # Modern blue
+            Priority.HIGH.value: "#F5A623",  # Warm orange
+            Priority.CRITICAL.value: "#E53E3E"  # Modern red
         }
-        return colors.get(priority, ft.Colors.GREY)
+        return colors.get(priority, "#9B9B9B")  # Light grey
 
     def open_project_details(e):
         show_project_details_modal(page, project)
@@ -215,7 +219,7 @@ def create_project_card(project: ProjectInfo, page: ft.Page):
     return ft.Container(
         content=ft.Column([
             ft.Row([
-                ft.Icon(ft.Icons.BUSINESS, color=ft.Colors.BLUE, size=20),
+                ft.Icon(ft.Icons.BUSINESS, color="#4A90E2", size=20),
                 ft.Text(project.project_name, weight="bold", size=16, expand=True),
                 ft.Container(
                     content=ft.Text(project.priority, size=10, color=ft.Colors.WHITE),
@@ -224,8 +228,8 @@ def create_project_card(project: ProjectInfo, page: ft.Page):
                     padding=ft.padding.symmetric(horizontal=8, vertical=2)
                 )
             ]),
-            ft.Text(f"Cliente: {project.customer_name}", size=12, color=ft.Colors.GREY),
-            ft.Text(f"Contacto: {project.customer_contact}", size=11, color=ft.Colors.GREY),
+            ft.Text(f"Cliente: {project.customer_name}", size=12, color="#6B7280"),
+            ft.Text(f"Contacto: {project.customer_contact}", size=11, color="#6B7280"),
             ft.Row([
                 ft.Container(
                     content=ft.Text(project.status, size=11, color=ft.Colors.WHITE),
@@ -233,20 +237,20 @@ def create_project_card(project: ProjectInfo, page: ft.Page):
                     border_radius=12,
                     padding=ft.padding.symmetric(horizontal=10, vertical=2)
                 ),
-                ft.Text(f"Score: {project.feasibility_score}%", size=11, weight="bold", color=ft.Colors.BLUE)
+                ft.Text(f"Score: {project.feasibility_score}%", size=11, weight="bold", color="#4A90E2")
             ]),
             ft.Row([
-                ft.Icon(ft.Icons.ATTACH_MONEY, size=14, color=ft.Colors.GREEN),
-                ft.Text(f"${project.target_price:.2f}", size=11, color=ft.Colors.GREEN),
-                ft.Icon(ft.Icons.TRENDING_UP, size=14, color=ft.Colors.BLUE),
-                ft.Text(f"{project.target_margin}% margen", size=11, color=ft.Colors.BLUE)
+                ft.Icon(ft.Icons.ATTACH_MONEY, size=14, color="#00BFA5"),
+                ft.Text(f"${project.target_price:.2f}", size=11, color="#00BFA5"),
+                ft.Icon(ft.Icons.TRENDING_UP, size=14, color="#4A90E2"),
+                ft.Text(f"{project.target_margin}% margen", size=11, color="#4A90E2")
             ]),
-            ft.Text(f"Volumen: {project.expected_volume}", size=11, color=ft.Colors.GREY),
-            ft.Text(f"Entrega: {project.delivery_date}", size=11, color=ft.Colors.GREY),
+            ft.Text(f"Volumen: {project.expected_volume}", size=11, color="#6B7280"),
+            ft.Text(f"Entrega: {project.delivery_date}", size=11, color="#6B7280"),
             ft.Row([
-                ft.Icon(ft.Icons.PERSON, size=12, color=ft.Colors.GREY),
-                ft.Text(f"Por: {project.created_by}", size=10, color=ft.Colors.GREY),
-                ft.Text(f"• {project.last_updated}", size=10, color=ft.Colors.GREY)
+                ft.Icon(ft.Icons.PERSON, size=12, color="#6B7280"),
+                ft.Text(f"Por: {project.created_by}", size=10, color="#6B7280"),
+                ft.Text(f"• {project.last_updated}", size=10, color="#6B7280")
             ])
         ]),
         bgcolor=ft.Colors.WHITE,
@@ -261,14 +265,14 @@ def create_project_card(project: ProjectInfo, page: ft.Page):
 def show_project_details_modal(page: ft.Page, project: ProjectInfo):
     def get_status_color(status: str):
         colors = {
-            ProjectStatus.NEW.value: ft.Colors.BLUE,
-            ProjectStatus.UNDER_REVIEW.value: ft.Colors.ORANGE,
-            ProjectStatus.FEASIBLE.value: ft.Colors.GREEN,
-            ProjectStatus.NOT_FEASIBLE.value: ft.Colors.RED,
-            ProjectStatus.APPROVED.value: ft.Colors.GREEN,
-            ProjectStatus.REJECTED.value: ft.Colors.RED
+            ProjectStatus.NEW.value: "#4A90E2",  # Modern blue
+            ProjectStatus.UNDER_REVIEW.value: "#F5A623",  # Warm orange
+            ProjectStatus.FEASIBLE.value: "#00BFA5",  # Teal/cyan
+            ProjectStatus.NOT_FEASIBLE.value: "#E53E3E",  # Modern red
+            ProjectStatus.APPROVED.value: "#00BFA5",  # Teal/cyan
+            ProjectStatus.REJECTED.value: "#E53E3E"  # Modern red
         }
-        return colors.get(status, ft.Colors.GREY)
+        return colors.get(status, "#9B9B9B")  # Light grey
 
     # Comments section
     comments_list = ft.Column([
@@ -317,7 +321,7 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
         ft.ElevatedButton(
             "Agregar Comentario",
             on_click=add_comment,
-            bgcolor=ft.Colors.BLUE,
+            bgcolor="#4A90E2",
             color=ft.Colors.WHITE
         )
     ])
@@ -344,7 +348,7 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
                         border_radius=12,
                         padding=ft.padding.symmetric(horizontal=12, vertical=4)
                     ),
-                    ft.Text(f"Score: {project.feasibility_score}%", size=14, weight="bold", color=ft.Colors.BLUE)
+                    ft.Text(f"Score: {project.feasibility_score}%", size=14, weight="bold", color="#4A90E2")
                 ])
             ]),
             
@@ -373,11 +377,11 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
             # Risk and opportunities
             ft.Row([
                 ft.Column([
-                    ft.Text("Factores de Riesgo", size=14, weight="bold", color=ft.Colors.RED),
+                    ft.Text("Factores de Riesgo", size=14, weight="bold", color="#E53E3E"),
                     ft.Column([ft.Text(f"• {risk}", size=11) for risk in project.risk_factors])
                 ], expand=True),
                 ft.Column([
-                    ft.Text("Oportunidades", size=14, weight="bold", color=ft.Colors.GREEN),
+                    ft.Text("Oportunidades", size=14, weight="bold", color="#00BFA5"),
                     ft.Column([ft.Text(f"• {opp}", size=11) for opp in project.opportunities])
                 ], expand=True)
             ]),
@@ -398,6 +402,12 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
             # Modal header
             ft.Row([
                 ft.Text("Detalles del Proyecto", size=18, weight="bold", expand=True),
+                ft.IconButton(
+                    ft.Icons.EDIT,
+                    on_click=lambda e: edit_project_modal(page, project),
+                    tooltip="Editar Proyecto",
+                    icon_color="#4A90E2"
+                ),
                 ft.IconButton(
                     ft.Icons.CLOSE,
                     on_click=lambda e: close_modal(modal, page),
@@ -468,6 +478,475 @@ def close_modal(modal, page: ft.Page):
             print("Emergency modal cleanup completed")
         except:
             pass
+
+def edit_project_modal(page: ft.Page, project: ProjectInfo):
+    """Create edit project modal with pre-filled form"""
+    global current_modal
+    
+    # Force close any existing modals first
+    force_close_all_modals(page)
+    
+    # Form fields with pre-filled values
+    project_name_field = ft.TextField(
+        label="Nombre del Proyecto *", 
+        hint_text="Ej: Tesla Everest",
+        value=project.project_name,
+        width=300,
+        autofocus=True
+    )
+    customer_name_field = ft.TextField(
+        label="Nombre del Cliente *", 
+        hint_text="Ej: Tesla Inc.",
+        value=project.customer_name,
+        width=300
+    )
+    customer_contact_field = ft.TextField(
+        label="Contacto del Cliente *", 
+        hint_text="Ej: Juan Pérez",
+        value=project.customer_contact,
+        width=300
+    )
+    customer_email_field = ft.TextField(
+        label="Email del Cliente *", 
+        hint_text="juan.perez@tesla.com",
+        value=project.customer_email,
+        width=300
+    )
+    customer_phone_field = ft.TextField(
+        label="Teléfono del Cliente", 
+        hint_text="+52 55 1234 5678",
+        value=project.customer_phone,
+        width=300
+    )
+    
+    description_field = ft.TextField(
+        label="Descripción del Proyecto *", 
+        hint_text="Descripción detallada del proyecto y sus objetivos",
+        value=project.project_description,
+        multiline=True, 
+        max_lines=3,
+        width=300
+    )
+    
+    # Commercial information
+    volume_field = ft.TextField(
+        label="Volumen Esperado *", 
+        hint_text="Ej: 50,000 pcs/año",
+        value=project.expected_volume,
+        width=300
+    )
+    price_field = ft.TextField(
+        label="Precio Objetivo (USD) *", 
+        hint_text="25.50",
+        value=str(project.target_price),
+        width=300
+    )
+    margin_field = ft.TextField(
+        label="Margen Objetivo (%)", 
+        hint_text="15.0",
+        value=str(project.target_margin),
+        width=300
+    )
+    delivery_field = ft.TextField(
+        label="Fecha de Entrega *", 
+        hint_text="2024-06-30",
+        value=project.delivery_date,
+        width=300
+    )
+    
+    # Technical requirements
+    tech_requirements_field = ft.TextField(
+        label="Requisitos Técnicos", 
+        hint_text="Especificaciones técnicas, materiales, tolerancias",
+        value=project.technical_requirements,
+        multiline=True, 
+        max_lines=3,
+        width=300
+    )
+    quality_requirements_field = ft.TextField(
+        label="Requisitos de Calidad", 
+        hint_text="Estándares de calidad, certificaciones requeridas",
+        value=project.quality_requirements,
+        multiline=True, 
+        max_lines=3,
+        width=300
+    )
+    regulatory_requirements_field = ft.TextField(
+        label="Requisitos Regulatorios", 
+        hint_text="Normas, regulaciones, certificaciones",
+        value=project.regulatory_requirements,
+        multiline=True, 
+        max_lines=3,
+        width=300
+    )
+    
+    # Project management
+    priority_dropdown = ft.Dropdown(
+        label="Prioridad *",
+        options=[ft.dropdown.Option(p.value) for p in Priority],
+        value=project.priority,
+        width=300
+    )
+    
+    status_dropdown = ft.Dropdown(
+        label="Estado *",
+        options=[ft.dropdown.Option(s.value) for s in ProjectStatus],
+        value=project.status,
+        width=300
+    )
+    
+    # Department assignments
+    dept1_dropdown = ft.Dropdown(
+        label="Departamento Principal *",
+        options=[ft.dropdown.Option(d.value) for d in Department],
+        value=project.assigned_departments[0] if project.assigned_departments else None,
+        width=200
+    )
+    dept2_dropdown = ft.Dropdown(
+        label="Departamento Secundario",
+        options=[ft.dropdown.Option(d.value) for d in Department],
+        value=project.assigned_departments[1] if len(project.assigned_departments) > 1 else None,
+        width=200
+    )
+    dept3_dropdown = ft.Dropdown(
+        label="Departamento Adicional",
+        options=[ft.dropdown.Option(d.value) for d in Department],
+        value=project.assigned_departments[2] if len(project.assigned_departments) > 2 else None,
+        width=200
+    )
+    
+    # Risk and opportunities
+    risk1_field = ft.TextField(
+        label="Factor de Riesgo Principal", 
+        hint_text="Ej: Alta competencia en el mercado",
+        value=project.risk_factors[0] if project.risk_factors else "",
+        width=200
+    )
+    risk2_field = ft.TextField(
+        label="Factor de Riesgo Secundario", 
+        hint_text="Ej: Complejidad técnica alta",
+        value=project.risk_factors[1] if len(project.risk_factors) > 1 else "",
+        width=200
+    )
+    risk3_field = ft.TextField(
+        label="Factor de Riesgo Adicional", 
+        hint_text="Ej: Dependencia de proveedores",
+        value=project.risk_factors[2] if len(project.risk_factors) > 2 else "",
+        width=200
+    )
+    
+    opp1_field = ft.TextField(
+        label="Oportunidad Principal", 
+        hint_text="Ej: Mercado en crecimiento",
+        value=project.opportunities[0] if project.opportunities else "",
+        width=200
+    )
+    opp2_field = ft.TextField(
+        label="Oportunidad Secundaria", 
+        hint_text="Ej: Cliente estratégico",
+        value=project.opportunities[1] if len(project.opportunities) > 1 else "",
+        width=200
+    )
+    opp3_field = ft.TextField(
+        label="Oportunidad Adicional", 
+        hint_text="Ej: Tecnología innovadora",
+        value=project.opportunities[2] if len(project.opportunities) > 2 else "",
+        width=200
+    )
+    
+    # Error message
+    error_text = ft.Text(
+        "",
+        color="#E53E3E",
+        visible=False,
+        size=12
+    )
+
+    # Validation function
+    def validate_form():
+        required_fields = [
+            (project_name_field, "Nombre del Proyecto"),
+            (customer_name_field, "Nombre del Cliente"),
+            (customer_contact_field, "Contacto del Cliente"),
+            (customer_email_field, "Email del Cliente"),
+            (description_field, "Descripción del Proyecto"),
+            (volume_field, "Volumen Esperado"),
+            (price_field, "Precio Objetivo"),
+            (delivery_field, "Fecha de Entrega"),
+            (priority_dropdown, "Prioridad"),
+            (status_dropdown, "Estado")
+        ]
+        
+        missing_fields = []
+        for field, label in required_fields:
+            if not field.value or field.value.strip() == "":
+                missing_fields.append(label)
+        
+        if missing_fields:
+            error_text.value = f"Campos requeridos faltantes: {', '.join(missing_fields)}"
+            error_text.visible = True
+            page.update()
+            return False
+        
+        # Validate email format
+        if customer_email_field.value and "@" not in customer_email_field.value:
+            error_text.value = "Formato de email inválido"
+            error_text.visible = True
+            page.update()
+            return False
+        
+        # Validate numeric fields
+        try:
+            if price_field.value:
+                float(price_field.value)
+            if margin_field.value:
+                float(margin_field.value)
+        except ValueError:
+            error_text.value = "Los campos de precio y margen deben ser números válidos"
+            error_text.visible = True
+            page.update()
+            return False
+        
+        error_text.visible = False
+        page.update()
+        return True
+
+    def save_changes(e):
+        if not validate_form():
+            return
+            
+        try:
+            # Update project with new values
+            updates = {
+                'project_name': project_name_field.value.strip(),
+                'customer_name': customer_name_field.value.strip(),
+                'customer_contact': customer_contact_field.value.strip(),
+                'customer_email': customer_email_field.value.strip(),
+                'customer_phone': customer_phone_field.value.strip() if customer_phone_field.value else "",
+                'project_description': description_field.value.strip(),
+                'expected_volume': volume_field.value.strip(),
+                'target_price': float(price_field.value) if price_field.value else 0.0,
+                'target_margin': float(margin_field.value) if margin_field.value else 0.0,
+                'delivery_date': delivery_field.value.strip(),
+                'technical_requirements': tech_requirements_field.value.strip() if tech_requirements_field.value else "",
+                'quality_requirements': quality_requirements_field.value.strip() if quality_requirements_field.value else "",
+                'regulatory_requirements': regulatory_requirements_field.value.strip() if regulatory_requirements_field.value else "",
+                'priority': priority_dropdown.value,
+                'status': status_dropdown.value,
+                'assigned_departments': [dept for dept in [dept1_dropdown.value, dept2_dropdown.value, dept3_dropdown.value] if dept],
+                'risk_factors': [risk.strip() for risk in [risk1_field.value, risk2_field.value, risk3_field.value] if risk and risk.strip()],
+                'opportunities': [opp.strip() for opp in [opp1_field.value, opp2_field.value, opp3_field.value] if opp and opp.strip()]
+            }
+            
+            state.update_project(project.id, updates)
+            close_modal(modal, page)
+            # Small delay to ensure modal is fully closed before refreshing
+            import time
+            time.sleep(0.1)
+            update_dashboard(page)  # Refresh the dashboard after updating project
+            
+        except Exception as ex:
+            error_text.value = f"Error al actualizar el proyecto: {str(ex)}"
+            error_text.visible = True
+            page.update()
+
+    def clear_form(e):
+        # Clear all fields
+        for field in [project_name_field, customer_name_field, customer_contact_field, 
+                     customer_email_field, customer_phone_field, description_field,
+                     volume_field, price_field, margin_field, delivery_field,
+                     tech_requirements_field, quality_requirements_field, 
+                     regulatory_requirements_field, risk1_field, risk2_field, 
+                     risk3_field, opp1_field, opp2_field, opp3_field]:
+            field.value = ""
+        
+        for dropdown in [priority_dropdown, status_dropdown, dept1_dropdown, dept2_dropdown, dept3_dropdown]:
+            dropdown.value = None
+        
+        error_text.visible = False
+        page.update()
+
+    # Create tabbed interface for better organization
+    basic_info_tab = ft.Column([
+        ft.Text("Información Básica del Proyecto", size=16, weight="bold", color="#4A90E2"),
+        ft.Row([
+            ft.Column([
+                project_name_field,
+                customer_name_field,
+                customer_contact_field,
+                customer_email_field,
+                customer_phone_field
+            ], expand=True),
+            ft.Column([
+                description_field,
+                priority_dropdown,
+                status_dropdown
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+    
+    commercial_tab = ft.Column([
+        ft.Text("Información Comercial", size=16, weight="bold", color="#00BFA5"),
+        ft.Row([
+            ft.Column([
+                volume_field,
+                price_field,
+                margin_field,
+                delivery_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+    
+    technical_tab = ft.Column([
+        ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color="#F5A623"),
+        ft.Row([
+            ft.Column([
+                tech_requirements_field,
+                quality_requirements_field
+            ], expand=True),
+            ft.Column([
+                regulatory_requirements_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+    
+    team_tab = ft.Column([
+        ft.Text("Asignación de Equipos y Evaluación", size=16, weight="bold", color=ft.Colors.PURPLE),
+        ft.Row([
+            ft.Column([
+                ft.Text("Departamentos Asignados", size=14, weight="bold"),
+                dept1_dropdown,
+                dept2_dropdown,
+                dept3_dropdown
+            ], expand=True),
+            ft.Column([
+                ft.Text("Factores de Riesgo", size=14, weight="bold"),
+                risk1_field,
+                risk2_field,
+                risk3_field
+            ], expand=True),
+            ft.Column([
+                ft.Text("Oportunidades", size=14, weight="bold"),
+                opp1_field,
+                opp2_field,
+                opp3_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+
+    tabs = ft.Tabs(
+        selected_index=0,
+        animation_duration=300,
+        tabs=[
+            ft.Tab(
+                text="Información Básica",
+                icon=ft.Icons.INFO,
+                content=basic_info_tab
+            ),
+            ft.Tab(
+                text="Información Comercial",
+                icon=ft.Icons.ATTACH_MONEY,
+                content=commercial_tab
+            ),
+            ft.Tab(
+                text="Requisitos Técnicos",
+                icon=ft.Icons.ENGINEERING,
+                content=technical_tab
+            ),
+            ft.Tab(
+                text="Equipos y Evaluación",
+                icon=ft.Icons.GROUP,
+                content=team_tab
+            )
+        ],
+        expand=True
+    )
+
+    # Create a custom modal using Container for better control
+    modal = ft.Container(
+        content=None,  # Will be set below
+        bgcolor=ft.Colors.WHITE,
+        border_radius=10,
+        padding=20,
+        width=900,
+        height=800,
+        shadow=ft.BoxShadow(blur_radius=20, spread_radius=5, color=ft.Colors.BLACK26),
+        visible=True
+    )
+
+    # Create buttons first for testing
+    cancel_button = ft.ElevatedButton(
+        "Cancelar",
+        icon=ft.Icons.CANCEL,
+        on_click=lambda e: close_modal(modal, page),
+        bgcolor=ft.Colors.GREY_400,
+        color=ft.Colors.WHITE,
+        height=50,
+        width=150
+    )
+    
+    save_button = ft.ElevatedButton(
+        "Guardar Cambios",
+        icon=ft.Icons.SAVE,
+        bgcolor="#00BFA5",
+        color=ft.Colors.WHITE,
+        on_click=save_changes,
+        height=50,
+        width=200
+    )
+    
+    # Create scrollable content (without buttons)
+    scrollable_content = ft.Column([
+        error_text,
+        tabs
+    ], scroll=ft.ScrollMode.AUTO, expand=True)
+    
+    # Create modal content with fixed buttons at bottom
+    modal_content = ft.Column([
+        scrollable_content,
+        ft.Divider(),
+        ft.Container(
+            content=ft.Row([
+                cancel_button,
+                save_button
+            ], alignment=ft.MainAxisAlignment.END, spacing=10),
+            bgcolor=ft.Colors.GREY_100,
+            padding=10,
+            border_radius=5
+        )
+    ], expand=True)
+
+    # Update modal content
+    modal.content = ft.Column([
+        # Modal header
+        ft.Row([
+            ft.Text("Editar Proyecto", size=18, weight="bold", expand=True),
+            ft.IconButton(
+                ft.Icons.CLOSE,
+                on_click=lambda e: close_modal(modal, page),
+                tooltip="Cerrar"
+            )
+        ]),
+        ft.Divider(),
+        # Modal content
+        modal_content
+    ], expand=True)
+    
+    # Create overlay background
+    overlay = ft.Container(
+        content=modal,
+        bgcolor=ft.Colors.BLACK26,
+        alignment=ft.alignment.center,
+        expand=True,
+        visible=True,
+        on_click=lambda e: close_modal(modal, page) if e.target == overlay else None
+    )
+    
+    # Set global reference and add to overlay
+    current_modal = overlay
+    page.overlay.append(overlay)
+    
+    page.update()
 
 def create_new_project_form(page: ft.Page):
     global current_modal
@@ -648,7 +1127,7 @@ def create_new_project_form(page: ft.Page):
     # Error message
     error_text = ft.Text(
         "",
-        color=ft.Colors.RED,
+        color="#E53E3E",
         visible=False,
         size=12
     )
@@ -745,7 +1224,7 @@ def create_new_project_form(page: ft.Page):
                 regulatory_requirements=regulatory_requirements_field.value.strip() if regulatory_requirements_field.value else "",
                 priority=priority_dropdown.value,
                 status=ProjectStatus.NEW.value,
-                created_by=state.current_user,
+                created_by="Usuario del Sistema",
                 created_date=datetime.datetime.now().strftime("%Y-%m-%d"),
                 last_updated=datetime.datetime.now().strftime("%Y-%m-%d"),
                 assigned_departments=[dept for dept in [dept1_dropdown.value, dept2_dropdown.value, dept3_dropdown.value] if dept],
@@ -785,7 +1264,7 @@ def create_new_project_form(page: ft.Page):
 
     # Create tabbed interface for better organization
     basic_info_tab = ft.Column([
-        ft.Text("Información Básica del Proyecto", size=16, weight="bold", color=ft.Colors.BLUE),
+        ft.Text("Información Básica del Proyecto", size=16, weight="bold", color="#4A90E2"),
         ft.Row([
             ft.Column([
                 project_name_field,
@@ -805,7 +1284,7 @@ def create_new_project_form(page: ft.Page):
     ], scroll=ft.ScrollMode.AUTO)
     
     commercial_tab = ft.Column([
-        ft.Text("Información Comercial", size=16, weight="bold", color=ft.Colors.GREEN),
+        ft.Text("Información Comercial", size=16, weight="bold", color="#00BFA5"),
         ft.Row([
             ft.Column([
                 volume_field,
@@ -821,7 +1300,7 @@ def create_new_project_form(page: ft.Page):
     ], scroll=ft.ScrollMode.AUTO)
     
     technical_tab = ft.Column([
-        ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color=ft.Colors.ORANGE),
+        ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color="#F5A623"),
         ft.Row([
             ft.Column([
                 tech_requirements_field,
@@ -911,7 +1390,7 @@ def create_new_project_form(page: ft.Page):
     save_button = ft.ElevatedButton(
         "Guardar Proyecto",
         icon=ft.Icons.SAVE,
-        bgcolor=ft.Colors.BLUE,
+        bgcolor="#4A90E2",
         color=ft.Colors.WHITE,
         on_click=save_project,
         height=50,
@@ -981,7 +1460,62 @@ def create_new_project_form(page: ft.Page):
 
 def update_dashboard(page: ft.Page):
     """Refresh the dashboard after modal operations"""
+    global project_list_ref, stats_row_ref
     try:
+        # Update project list if reference exists
+        if project_list_ref is not None:
+            project_list_ref.controls.clear()
+            projects = state.get_projects()
+            project_list_ref.controls.extend([create_project_card(p, page) for p in projects])
+        
+        # Update statistics if reference exists
+        if stats_row_ref is not None:
+            # Recalculate statistics
+            total = len(state.projects)
+            feasible = len([p for p in state.projects if p.status == ProjectStatus.FEASIBLE.value])
+            under_review = len([p for p in state.projects if p.status == ProjectStatus.UNDER_REVIEW.value])
+            approved = len([p for p in state.projects if p.status == ProjectStatus.APPROVED.value])
+            rejected = len([p for p in state.projects if p.status == ProjectStatus.REJECTED.value])
+            not_feasible = len([p for p in state.projects if p.status == ProjectStatus.NOT_FEASIBLE.value])
+            avg_score = sum(p.feasibility_score for p in state.projects) / total if total > 0 else 0
+            
+            # Update the statistics containers
+            if len(stats_row_ref.controls) >= 7:
+                # Update total projects
+                total_container = stats_row_ref.controls[0]
+                if hasattr(total_container, 'content') and hasattr(total_container.content, 'controls'):
+                    total_container.content.controls[1].value = str(total)
+                
+                # Update feasible projects
+                feasible_container = stats_row_ref.controls[1]
+                if hasattr(feasible_container, 'content') and hasattr(feasible_container.content, 'controls'):
+                    feasible_container.content.controls[1].value = str(feasible)
+                
+                # Update under review
+                review_container = stats_row_ref.controls[2]
+                if hasattr(review_container, 'content') and hasattr(review_container.content, 'controls'):
+                    review_container.content.controls[1].value = str(under_review)
+                
+                # Update average score
+                score_container = stats_row_ref.controls[3]
+                if hasattr(score_container, 'content') and hasattr(score_container.content, 'controls'):
+                    score_container.content.controls[1].value = f"{avg_score:.1f}%"
+                
+                # Update approved projects
+                approved_container = stats_row_ref.controls[4]
+                if hasattr(approved_container, 'content') and hasattr(approved_container.content, 'controls'):
+                    approved_container.content.controls[1].value = str(approved)
+                
+                # Update rejected projects
+                rejected_container = stats_row_ref.controls[5]
+                if hasattr(rejected_container, 'content') and hasattr(rejected_container.content, 'controls'):
+                    rejected_container.content.controls[1].value = str(rejected)
+                
+                # Update not feasible projects
+                not_feasible_container = stats_row_ref.controls[6]
+                if hasattr(not_feasible_container, 'content') and hasattr(not_feasible_container.content, 'controls'):
+                    not_feasible_container.content.controls[1].value = str(not_feasible)
+        
         # Force a complete page refresh to ensure all components are updated
         page.update()
     except Exception as e:
@@ -992,7 +1526,7 @@ def update_dashboard(page: ft.Page):
 
 def main(page: ft.Page):
     page.title = "Sistema de Evaluación de Factibilidad"
-    page.bgcolor = ft.Colors.GREY_100
+    page.bgcolor = "#F8F9FA"  # Light grey background
     page.horizontal_alignment = "stretch"
     page.theme_mode = ft.ThemeMode.LIGHT
     
@@ -1005,15 +1539,11 @@ def main(page: ft.Page):
 
     # Header
     header = ft.Row(
-        alignment="spaceBetween",
+        alignment="start",
         controls=[
             ft.Row([
-                ft.Icon(ft.Icons.ASSESSMENT, color=ft.Colors.BLUE, size=24),
-                ft.Text("Sistema de Evaluación de Factibilidad", size=20, weight="bold", color=ft.Colors.BLUE)
-            ]),
-            ft.Row([
-                ft.Text(f"Usuario: {state.current_user}", size=12, color=ft.Colors.GREY),
-                ft.Text(f"({state.current_department})", size=12, color=ft.Colors.GREY)
+                ft.Icon(ft.Icons.ASSESSMENT, color="#4A90E2", size=24),
+                ft.Text("Sistema de Evaluación de Factibilidad", size=20, weight="bold", color="#4A90E2")
             ])
         ]
     )
@@ -1051,6 +1581,10 @@ def main(page: ft.Page):
 
     # Project list
     project_list = ft.Row([], wrap=True, spacing=10)
+    
+    # Set global reference for updates
+    global project_list_ref
+    project_list_ref = project_list
 
     def update_project_list():
         project_list.controls.clear()
@@ -1062,12 +1596,18 @@ def main(page: ft.Page):
         total = len(state.projects)
         feasible = len([p for p in state.projects if p.status == ProjectStatus.FEASIBLE.value])
         under_review = len([p for p in state.projects if p.status == ProjectStatus.UNDER_REVIEW.value])
+        approved = len([p for p in state.projects if p.status == ProjectStatus.APPROVED.value])
+        rejected = len([p for p in state.projects if p.status == ProjectStatus.REJECTED.value])
+        not_feasible = len([p for p in state.projects if p.status == ProjectStatus.NOT_FEASIBLE.value])
         avg_score = sum(p.feasibility_score for p in state.projects) / total if total > 0 else 0
         
         return {
             "total": total,
             "feasible": feasible,
             "under_review": under_review,
+            "approved": approved,
+            "rejected": rejected,
+            "not_feasible": not_feasible,
             "avg_score": avg_score
         }
 
@@ -1076,7 +1616,7 @@ def main(page: ft.Page):
         ft.Container(
             content=ft.Column([
                 ft.Text("Total Proyectos", size=14, weight="bold"),
-                ft.Text(str(stats["total"]), size=24, color=ft.Colors.BLUE)
+                ft.Text(str(stats["total"]), size=24, color="#4A90E2")
             ], horizontal_alignment="center"),
             bgcolor=ft.Colors.WHITE,
             padding=15,
@@ -1086,7 +1626,7 @@ def main(page: ft.Page):
         ft.Container(
             content=ft.Column([
                 ft.Text("Factibles", size=14, weight="bold"),
-                ft.Text(str(stats["feasible"]), size=24, color=ft.Colors.GREEN)
+                ft.Text(str(stats["feasible"]), size=24, color="#00BFA5")
             ], horizontal_alignment="center"),
             bgcolor=ft.Colors.WHITE,
             padding=15,
@@ -1096,7 +1636,7 @@ def main(page: ft.Page):
         ft.Container(
             content=ft.Column([
                 ft.Text("En Revisión", size=14, weight="bold"),
-                ft.Text(str(stats["under_review"]), size=24, color=ft.Colors.ORANGE)
+                ft.Text(str(stats["under_review"]), size=24, color="#F5A623")
             ], horizontal_alignment="center"),
             bgcolor=ft.Colors.WHITE,
             padding=15,
@@ -1106,7 +1646,37 @@ def main(page: ft.Page):
         ft.Container(
             content=ft.Column([
                 ft.Text("Score Promedio", size=14, weight="bold"),
-                ft.Text(f"{stats['avg_score']:.1f}%", size=24, color=ft.Colors.PURPLE)
+                ft.Text(f"{stats['avg_score']:.1f}%", size=24, color="#00BFA5")
+            ], horizontal_alignment="center"),
+            bgcolor=ft.Colors.WHITE,
+            padding=15,
+            border_radius=10,
+            expand=True
+        ),
+        ft.Container(
+            content=ft.Column([
+                ft.Text("Aprobados", size=14, weight="bold"),
+                ft.Text(str(stats["approved"]), size=24, color="#00BFA5")
+            ], horizontal_alignment="center"),
+            bgcolor=ft.Colors.WHITE,
+            padding=15,
+            border_radius=10,
+            expand=True
+        ),
+        ft.Container(
+            content=ft.Column([
+                ft.Text("Rechazados", size=14, weight="bold"),
+                ft.Text(str(stats["rejected"]), size=24, color="#E53E3E")
+            ], horizontal_alignment="center"),
+            bgcolor=ft.Colors.WHITE,
+            padding=15,
+            border_radius=10,
+            expand=True
+        ),
+        ft.Container(
+            content=ft.Column([
+                ft.Text("No Factibles", size=14, weight="bold"),
+                ft.Text(str(stats["not_feasible"]), size=24, color="#E53E3E")
             ], horizontal_alignment="center"),
             bgcolor=ft.Colors.WHITE,
             padding=15,
@@ -1114,6 +1684,10 @@ def main(page: ft.Page):
             expand=True
         )
     ])
+    
+    # Set global reference for statistics updates
+    global stats_row_ref
+    stats_row_ref = stats_row
 
     # Main layout
     page.add(
@@ -1125,16 +1699,9 @@ def main(page: ft.Page):
             ft.Row([
                 ft.ElevatedButton(
                     "+ Nuevo Proyecto",
-                    bgcolor=ft.Colors.BLUE,
+                    bgcolor="#4A90E2",
                     color=ft.Colors.WHITE,
                     on_click=lambda e: create_new_project_form(page)
-                ),
-                ft.ElevatedButton(
-                    "🔄 Limpiar Modales",
-                    bgcolor=ft.Colors.ORANGE,
-                    color=ft.Colors.WHITE,
-                    on_click=lambda e: force_close_all_modals(page),
-                    tooltip="Cerrar cualquier modal que esté abierto"
                 ),
                 status_filter,
                 priority_filter,
@@ -1156,6 +1723,7 @@ def main(page: ft.Page):
 
     # Initialize project list
     update_project_list()
+    page.update()
 
 if __name__ == "__main__":
     ft.app(main)
