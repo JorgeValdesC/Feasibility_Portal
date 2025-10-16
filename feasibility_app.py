@@ -22,6 +22,7 @@ class Priority(Enum):
 
 class Department(Enum):
     SALES = "Ventas"
+    PROJECTS = "Proyectos"
     ENGINEERING = "Ingeniería"
     PRODUCTION = "Producción"
     QUALITY = "Calidad"
@@ -57,6 +58,8 @@ class ProjectInfo:
     risk_factors: List[str]
     opportunities: List[str]
     comments: List[Dict]
+    technical_drawings_pdf: List[str]
+    technical_drawings_step: List[str]
 
 # State management class
 class FeasibilityState:
@@ -71,24 +74,26 @@ class FeasibilityState:
                 customer_phone="+1 608 692 6323",
                 project_description="Estampado de rotor y estator para motor IM + Die casting RT + Torneado RT + Lavado RT",
                 expected_volume="25,000 sets/año",
-                target_price=25.50,
-                target_margin=15.0,
+                target_price=150,
+                target_margin=8.0,
                 delivery_date="2026-03-17",
-                technical_requirements="ISO 9001, IATF 16949, tolerancias ±0.1mm",
-                quality_requirements="Cero defectos, 99.9% confiabilidad",
-                regulatory_requirements="Normas automotrices mexicanas y estadounidenses",
+                technical_requirements="ISO 9001, IATF 16949, Especificados en dibujos",
+                quality_requirements="Especificados en dibujos",
+                regulatory_requirements="Normas automotrices mexicanas y estadounidenses, Especificados en dibujos",
                 priority=Priority.HIGH.value,
                 status=ProjectStatus.UNDER_REVIEW.value,
                 created_by="Jorge Valdés",
                 created_date="2025-10-16",
                 last_updated="2025-10-16",
-                assigned_departments=[Department.ENGINEERING.value, Department.PRODUCTION.value],
+                assigned_departments=[Department.ENGINEERING.value, Department.QUALITY.value, Department.SALES.value, Department.PROJECTS.value],
                 feasibility_score=75,
                 risk_factors=["Alta competencia", "Requisitos técnicos complejos", "Nuevos procesos", "Mucha inversión", "Bajo volumen", "Dibujos no congelados"],
                 opportunities=["Mercado en crecimiento", "Cliente nuevo", "Nuevos procesos"],
                 comments=[
 
-                ]
+                ],
+                technical_drawings_pdf=[],
+                technical_drawings_step=[]
             ),
             
         ]
@@ -332,10 +337,10 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
                 ft.Column([
                     ft.Text("Información del Proyecto", size=16, weight="bold"),
                     ft.Text(f"Descripción: {project.project_description}", size=12),
-                    ft.Text(f"Volumen Esperado: {project.expected_volume}", size=12),
-                    ft.Text(f"Fecha de Entrega: {project.delivery_date}", size=12),
-                    ft.Text(f"Precio Objetivo: ${project.target_price:.2f}", size=12),
-                    ft.Text(f"Margen Objetivo: {project.target_margin}%", size=12)
+                    ft.Text(f"Volumen Esperado en Sets: {project.expected_volume}", size=12),
+                    ft.Text(f"Fecha de Entrega primeras piezas: {project.delivery_date}", size=12),
+                    ft.Text(f"Precio Set: ${project.target_price:.2f}", size=12),
+                    ft.Text(f"Margen Objetivo Set USD: {project.target_margin}%", size=12)
                 ], expand=True),
                 ft.Column([
                     ft.Text("Requisitos", size=16, weight="bold"),
@@ -503,13 +508,13 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
     
     # Commercial information
     volume_field = ft.TextField(
-        label="Volumen Esperado *", 
+        label="Volumen Esperado en Sets *", 
         hint_text="Ej: 50,000 pcs/año",
         value=project.expected_volume,
         width=300
     )
     price_field = ft.TextField(
-        label="Precio Objetivo (USD) *", 
+        label="Precio Objetivo (USD) en Sets *", 
         hint_text="25.50",
         value=str(project.target_price),
         width=300
@@ -522,7 +527,7 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
     )
     delivery_field = ft.TextField(
         label="Fecha de Entrega *", 
-        hint_text="2024-06-30",
+        hint_text="Año-Mes-Día",
         value=project.delivery_date,
         width=300
     )
@@ -608,7 +613,7 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
     def create_opp_field(index, value=""):
         field = ft.TextField(
             label=f"Oportunidad {index + 1}",
-            hint_text="Ej: Mercado en crecimiento",
+            hint_text="Ej: Nuevo cliente",
             value=value,
             width=200
         )
@@ -1079,6 +1084,111 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     
+    # Document selectors for technical drawings
+    pdf_files = []
+    step_files = []
+    
+    def on_pdf_file_picked(e: ft.FilePickerResultEvent):
+        if e.files:
+            for file in e.files:
+                # Validate file extension
+                if file.path.lower().endswith('.pdf'):
+                    pdf_files.append(file.path)
+                else:
+                    # Show error message for invalid file type
+                    error_text.value = f"Archivo inválido: {file.path.split('/')[-1]}. Solo se permiten archivos PDF."
+                    error_text.visible = True
+                    page.update()
+            update_document_display()
+    
+    def on_step_file_picked(e: ft.FilePickerResultEvent):
+        if e.files:
+            for file in e.files:
+                # Validate file extension
+                if file.path.lower().endswith(('.stp', '.step')):
+                    step_files.append(file.path)
+                else:
+                    # Show error message for invalid file type
+                    error_text.value = f"Archivo inválido: {file.path.split('/')[-1]}. Solo se permiten archivos STEP (.stp, .step)."
+                    error_text.visible = True
+                    page.update()
+            update_document_display()
+    
+    def update_document_display():
+        # Clear existing display
+        pdf_display.controls.clear()
+        step_display.controls.clear()
+        
+        # Add PDF files
+        for i, file_path in enumerate(pdf_files):
+            pdf_display.controls.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.PICTURE_AS_PDF, color="#E53E3E", size=16),
+                        ft.Text(f"PDF {i+1}: {file_path.split('/')[-1]}", size=12),
+                        ft.IconButton(
+                            ft.Icons.DELETE,
+                            on_click=lambda e, idx=i: remove_pdf_file(idx),
+                            icon_color="#E53E3E",
+                            icon_size=16
+                        )
+                    ]),
+                    bgcolor=ft.Colors.RED_50,
+                    padding=5,
+                    margin=2,
+                    border_radius=5
+                )
+            )
+        
+        # Add STEP files
+        for i, file_path in enumerate(step_files):
+            step_display.controls.append(
+                ft.Container(
+                    content=ft.Row([
+                        ft.Icon(ft.Icons.ENGINEERING, color="#4A90E2", size=16),
+                        ft.Text(f"STEP {i+1}: {file_path.split('/')[-1]}", size=12),
+                        ft.IconButton(
+                            ft.Icons.DELETE,
+                            on_click=lambda e, idx=i: remove_step_file(idx),
+                            icon_color="#E53E3E",
+                            icon_size=16
+                        )
+                    ]),
+                    bgcolor=ft.Colors.BLUE_50,
+                    padding=5,
+                    margin=2,
+                    border_radius=5
+                )
+            )
+        
+        page.update()
+    
+    def remove_pdf_file(index):
+        if 0 <= index < len(pdf_files):
+            pdf_files.pop(index)
+            update_document_display()
+    
+    def remove_step_file(index):
+        if 0 <= index < len(step_files):
+            step_files.pop(index)
+            update_document_display()
+    
+    # File pickers
+    pdf_picker = ft.FilePicker(
+        on_result=on_pdf_file_picked
+    )
+    step_picker = ft.FilePicker(
+        on_result=on_step_file_picked
+    )
+    
+    # Document display containers
+    pdf_display = ft.Column([])
+    step_display = ft.Column([])
+    
+    # Add file pickers to page
+    page.overlay.append(pdf_picker)
+    page.overlay.append(step_picker)
+    
     # Project management
     priority_dropdown = ft.Dropdown(
         label="Prioridad *",
@@ -1089,11 +1199,9 @@ def create_new_project_form(page: ft.Page):
     project_type_dropdown = ft.Dropdown(
         label="Tipo de Proyecto",
         options=[
-            ft.dropdown.Option("Desarrollo Nuevo"),
-            ft.dropdown.Option("Mejora de Producto Existente"),
-            ft.dropdown.Option("Sustitución de Proveedor"),
-            ft.dropdown.Option("Expansión de Capacidad"),
-            ft.dropdown.Option("Optimización de Costos")
+            ft.dropdown.Option("Nuevo Proyecto"),
+            ft.dropdown.Option("Cambio de ingeniería"),
+            ft.dropdown.Option("Incremento de Capacidad"),
         ],
         width=300
     )
@@ -1291,7 +1399,9 @@ def create_new_project_form(page: ft.Page):
                 feasibility_score=initial_score,
                 risk_factors=[risk.strip() for risk in [field.value for field in new_risk_fields] if risk and risk.strip()],
                 opportunities=[opp.strip() for opp in [field.value for field in new_opp_fields] if opp and opp.strip()],
-                comments=[]
+                comments=[],
+                technical_drawings_pdf=pdf_files.copy(),
+                technical_drawings_step=step_files.copy()
             )
             
             state.add_project(new_project)
@@ -1320,6 +1430,11 @@ def create_new_project_form(page: ft.Page):
             field.value = ""
         for field in new_opp_fields:
             field.value = ""
+        
+        # Clear document lists
+        pdf_files.clear()
+        step_files.clear()
+        update_document_display()
         
         for dropdown in [priority_dropdown, dept1_dropdown, dept2_dropdown, dept3_dropdown]:
             dropdown.value = None
@@ -1373,6 +1488,40 @@ def create_new_project_form(page: ft.Page):
             ], expand=True),
             ft.Column([
                 regulatory_requirements_field
+            ], expand=True)
+        ]),
+        ft.Divider(),
+        ft.Text("Documentos Técnicos", size=16, weight="bold", color="#4A90E2"),
+        ft.Row([
+            ft.Column([
+                ft.Text("Planos 2D (PDF)", size=14, weight="bold"),
+                ft.ElevatedButton(
+                    "Seleccionar PDFs",
+                    icon=ft.Icons.PICTURE_AS_PDF,
+                    on_click=lambda e: pdf_picker.pick_files(
+                        dialog_title="Seleccionar archivos PDF",
+                        allow_multiple=True
+                    ),
+                    bgcolor="#E53E3E",
+                    color=ft.Colors.WHITE,
+                    width=200
+                ),
+                pdf_display
+            ], expand=True),
+            ft.Column([
+                ft.Text("Modelos 3D (STEP)", size=14, weight="bold"),
+                ft.ElevatedButton(
+                    "Seleccionar STEP",
+                    icon=ft.Icons.ENGINEERING,
+                    on_click=lambda e: step_picker.pick_files(
+                        dialog_title="Seleccionar archivos STEP",
+                        allow_multiple=True
+                    ),
+                    bgcolor="#4A90E2",
+                    color=ft.Colors.WHITE,
+                    width=200
+                ),
+                step_display
             ], expand=True)
         ])
     ], scroll=ft.ScrollMode.AUTO)
