@@ -64,61 +64,33 @@ class FeasibilityState:
         self.projects = [
             ProjectInfo(
                 id=1,
-                project_name="Componentes Automotrices Honda",
-                customer_name="Honda Motor Co.",
-                customer_contact="Juan Pérez",
-                customer_email="juan.perez@honda.com",
-                customer_phone="+52 55 1234 5678",
-                project_description="Desarrollo de componentes automotrices para nueva línea de vehículos híbridos",
-                expected_volume="50,000 pcs/año",
+                project_name="LUCID ATLAS IM",
+                customer_name="LUCID",
+                customer_contact="Nidhishri Tapadia",
+                customer_email="NidhishriTapadia@lucidmotors.com",
+                customer_phone="+1 608 692 6323",
+                project_description="Estampado de rotor y estator para motor IM + Die casting RT + Torneado RT + Lavado RT",
+                expected_volume="25,000 sets/año",
                 target_price=25.50,
                 target_margin=15.0,
-                delivery_date="2024-06-30",
+                delivery_date="2026-03-17",
                 technical_requirements="ISO 9001, IATF 16949, tolerancias ±0.1mm",
                 quality_requirements="Cero defectos, 99.9% confiabilidad",
                 regulatory_requirements="Normas automotrices mexicanas y estadounidenses",
                 priority=Priority.HIGH.value,
                 status=ProjectStatus.UNDER_REVIEW.value,
-                created_by="Ana García",
-                created_date="2024-01-15",
-                last_updated="2024-01-20",
+                created_by="Jorge Valdés",
+                created_date="2025-10-16",
+                last_updated="2025-10-16",
                 assigned_departments=[Department.ENGINEERING.value, Department.PRODUCTION.value],
                 feasibility_score=75,
-                risk_factors=["Alta competencia", "Requisitos técnicos complejos"],
-                opportunities=["Mercado en crecimiento", "Cliente estratégico"],
+                risk_factors=["Alta competencia", "Requisitos técnicos complejos", "Nuevos procesos", "Mucha inversión", "Bajo volumen", "Dibujos no congelados"],
+                opportunities=["Mercado en crecimiento", "Cliente nuevo", "Nuevos procesos"],
                 comments=[
-                    {"author": "Carlos López", "department": "Ingeniería", "comment": "Revisión técnica completada", "date": "2024-01-18"},
-                    {"author": "María Rodríguez", "department": "Producción", "comment": "Capacidad de producción disponible", "date": "2024-01-19"}
+
                 ]
             ),
-            ProjectInfo(
-                id=2,
-                project_name="Carcasas Electrónicas Samsung",
-                customer_name="Samsung Electronics",
-                customer_contact="Kim Lee",
-                customer_email="kim.lee@samsung.com",
-                customer_phone="+82 2 1234 5678",
-                project_description="Fabricación de carcasas para dispositivos electrónicos de consumo",
-                expected_volume="100,000 pcs/año",
-                target_price=12.75,
-                target_margin=20.0,
-                delivery_date="2024-03-15",
-                technical_requirements="Certificación UL, resistencia a impactos",
-                quality_requirements="Inspección 100%, cero defectos visuales",
-                regulatory_requirements="FCC, CE marking",
-                priority=Priority.MEDIUM.value,
-                status=ProjectStatus.FEASIBLE.value,
-                created_by="Roberto Silva",
-                created_date="2023-11-01",
-                last_updated="2024-01-10",
-                assigned_departments=[Department.ENGINEERING.value, Department.QUALITY.value, Department.PRODUCTION.value],
-                feasibility_score=85,
-                risk_factors=["Volatilidad de precios de materiales"],
-                opportunities=["Contrato a largo plazo", "Tecnología avanzada"],
-                comments=[
-                    {"author": "Ana García", "department": "Ventas", "comment": "Cliente muy satisfecho con propuesta", "date": "2024-01-05"}
-                ]
-            )
+            
         ]
         self.next_id = 3
         self.filter_status = "Todos"
@@ -158,8 +130,6 @@ class FeasibilityState:
         for project in self.projects:
             if project.id == project_id:
                 new_comment = {
-                    "author": "Usuario del Sistema",
-                    "department": "Sistema",
                     "comment": comment,
                     "date": datetime.datetime.now().strftime("%Y-%m-%d")
                 }
@@ -275,28 +245,7 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
         return colors.get(status, "#9B9B9B")  # Light grey
 
     # Comments section
-    comments_list = ft.Column([
-        ft.Text("Comentarios del Equipo", size=16, weight="bold"),
-        ft.Divider()
-    ])
-    
-    for comment in project.comments:
-        comments_list.controls.append(
-            ft.Container(
-                content=ft.Column([
-                    ft.Row([
-                        ft.Text(comment["author"], weight="bold", size=12),
-                        ft.Text(f"({comment['department']})", size=11, color=ft.Colors.GREY),
-                        ft.Text(comment["date"], size=10, color=ft.Colors.GREY)
-                    ]),
-                    ft.Text(comment["comment"], size=12)
-                ]),
-                bgcolor=ft.Colors.GREY_100,
-                padding=10,
-                margin=5,
-                border_radius=8
-            )
-        )
+    comments_list = ft.Column([])
 
     # Add comment section
     new_comment_field = ft.TextField(
@@ -309,22 +258,46 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
         if new_comment_field.value.strip():
             state.add_comment(project.id, new_comment_field.value)
             new_comment_field.value = ""
-            show_project_details_modal(page, project)  # Refresh modal
+            # Update the comments section without recreating the entire modal
+            update_comments_section()
             page.update()
-
-    comments_list.controls.extend([
-        ft.TextField(
-            label="Agregar comentario",
-            multiline=True,
-            max_lines=3
-        ),
-        ft.ElevatedButton(
-            "Agregar Comentario",
-            on_click=add_comment,
-            bgcolor="#4A90E2",
-            color=ft.Colors.WHITE
-        )
-    ])
+    
+    def update_comments_section():
+        # Clear existing comments and rebuild
+        comments_list.controls.clear()
+        comments_list.controls.append(ft.Text("Comentarios del Equipo", size=16, weight="bold"))
+        comments_list.controls.append(ft.Divider())
+        
+        # Add existing comments
+        for comment in project.comments:
+            comments_list.controls.append(
+                ft.Container(
+                    content=ft.Column([
+                        ft.Row([
+                            ft.Text(comment["date"], size=10, color=ft.Colors.GREY)
+                        ]),
+                        ft.Text(comment["comment"], size=12)
+                    ]),
+                    bgcolor=ft.Colors.GREY_100,
+                    padding=10,
+                    margin=5,
+                    border_radius=8
+                )
+            )
+        
+        # Add the comment input section
+        comments_list.controls.extend([
+            new_comment_field,
+            ft.ElevatedButton(
+                "Agregar Comentario",
+                on_click=add_comment,
+                bgcolor="#4A90E2",
+                color=ft.Colors.WHITE
+            )
+        ])
+    
+    # Initialize the comments section
+    update_comments_section()
 
     modal_content = ft.Container(
         content=ft.Column([
@@ -615,44 +588,94 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
         width=200
     )
     
-    # Risk and opportunities
-    risk1_field = ft.TextField(
-        label="Factor de Riesgo Principal", 
-        hint_text="Ej: Alta competencia en el mercado",
-        value=project.risk_factors[0] if project.risk_factors else "",
-        width=200
-    )
-    risk2_field = ft.TextField(
-        label="Factor de Riesgo Secundario", 
-        hint_text="Ej: Complejidad técnica alta",
-        value=project.risk_factors[1] if len(project.risk_factors) > 1 else "",
-        width=200
-    )
-    risk3_field = ft.TextField(
-        label="Factor de Riesgo Adicional", 
-        hint_text="Ej: Dependencia de proveedores",
-        value=project.risk_factors[2] if len(project.risk_factors) > 2 else "",
+    # Dynamic Risk and opportunities containers
+    risk_factors_container = ft.Column([])
+    opportunities_container = ft.Column([])
+    
+    # Lists to store dynamic fields
+    risk_fields = []
+    opp_fields = []
+    
+    def create_risk_field(index, value=""):
+        field = ft.TextField(
+            label=f"Factor de Riesgo {index + 1}",
+            hint_text="Ej: Alta competencia en el mercado",
+            value=value,
+            width=200
+        )
+        return field
+    
+    def create_opp_field(index, value=""):
+        field = ft.TextField(
+            label=f"Oportunidad {index + 1}",
+            hint_text="Ej: Mercado en crecimiento",
+            value=value,
+            width=200
+        )
+        return field
+    
+    def add_risk_field(e):
+        new_field = create_risk_field(len(risk_fields))
+        risk_fields.append(new_field)
+        risk_factors_container.controls.append(new_field)
+        page.update()
+    
+    def add_opp_field(e):
+        new_field = create_opp_field(len(opp_fields))
+        opp_fields.append(new_field)
+        opportunities_container.controls.append(new_field)
+        page.update()
+    
+    def remove_risk_field(field_to_remove):
+        if field_to_remove in risk_fields:
+            risk_fields.remove(field_to_remove)
+            risk_factors_container.controls.remove(field_to_remove)
+            # Update labels
+            for i, field in enumerate(risk_fields):
+                field.label = f"Factor de Riesgo {i + 1}"
+            page.update()
+    
+    def remove_opp_field(field_to_remove):
+        if field_to_remove in opp_fields:
+            opp_fields.remove(field_to_remove)
+            opportunities_container.controls.remove(field_to_remove)
+            # Update labels
+            for i, field in enumerate(opp_fields):
+                field.label = f"Oportunidad {i + 1}"
+            page.update()
+    
+    # Initialize with existing data
+    for i, risk in enumerate(project.risk_factors):
+        field = create_risk_field(i, risk)
+        risk_fields.append(field)
+        risk_factors_container.controls.append(field)
+    
+    for i, opp in enumerate(project.opportunities):
+        field = create_opp_field(i, opp)
+        opp_fields.append(field)
+        opportunities_container.controls.append(field)
+    
+    # Add buttons to add more fields
+    add_risk_button = ft.ElevatedButton(
+        "+ Agregar Factor de Riesgo",
+        on_click=add_risk_field,
+        bgcolor="#E53E3E",
+        color=ft.Colors.WHITE,
+        height=35,
         width=200
     )
     
-    opp1_field = ft.TextField(
-        label="Oportunidad Principal", 
-        hint_text="Ej: Mercado en crecimiento",
-        value=project.opportunities[0] if project.opportunities else "",
+    add_opp_button = ft.ElevatedButton(
+        "+ Agregar Oportunidad",
+        on_click=add_opp_field,
+        bgcolor="#00BFA5",
+        color=ft.Colors.WHITE,
+        height=35,
         width=200
     )
-    opp2_field = ft.TextField(
-        label="Oportunidad Secundaria", 
-        hint_text="Ej: Cliente estratégico",
-        value=project.opportunities[1] if len(project.opportunities) > 1 else "",
-        width=200
-    )
-    opp3_field = ft.TextField(
-        label="Oportunidad Adicional", 
-        hint_text="Ej: Tecnología innovadora",
-        value=project.opportunities[2] if len(project.opportunities) > 2 else "",
-        width=200
-    )
+    
+    risk_factors_container.controls.append(add_risk_button)
+    opportunities_container.controls.append(add_opp_button)
     
     # Error message
     error_text = ft.Text(
@@ -734,8 +757,8 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
                 'priority': priority_dropdown.value,
                 'status': status_dropdown.value,
                 'assigned_departments': [dept for dept in [dept1_dropdown.value, dept2_dropdown.value, dept3_dropdown.value] if dept],
-                'risk_factors': [risk.strip() for risk in [risk1_field.value, risk2_field.value, risk3_field.value] if risk and risk.strip()],
-                'opportunities': [opp.strip() for opp in [opp1_field.value, opp2_field.value, opp3_field.value] if opp and opp.strip()]
+                'risk_factors': [risk.strip() for risk in [field.value for field in risk_fields] if risk and risk.strip()],
+                'opportunities': [opp.strip() for opp in [field.value for field in opp_fields] if opp and opp.strip()]
             }
             
             state.update_project(project.id, updates)
@@ -756,8 +779,13 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
                      customer_email_field, customer_phone_field, description_field,
                      volume_field, price_field, margin_field, delivery_field,
                      tech_requirements_field, quality_requirements_field, 
-                     regulatory_requirements_field, risk1_field, risk2_field, 
-                     risk3_field, opp1_field, opp2_field, opp3_field]:
+                     regulatory_requirements_field]:
+            field.value = ""
+        
+        # Clear dynamic fields
+        for field in risk_fields:
+            field.value = ""
+        for field in opp_fields:
             field.value = ""
         
         for dropdown in [priority_dropdown, status_dropdown, dept1_dropdown, dept2_dropdown, dept3_dropdown]:
@@ -821,15 +849,11 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
             ], expand=True),
             ft.Column([
                 ft.Text("Factores de Riesgo", size=14, weight="bold"),
-                risk1_field,
-                risk2_field,
-                risk3_field
+                risk_factors_container
             ], expand=True),
             ft.Column([
                 ft.Text("Oportunidades", size=14, weight="bold"),
-                opp1_field,
-                opp2_field,
-                opp3_field
+                opportunities_container
             ], expand=True)
         ])
     ], scroll=ft.ScrollMode.AUTO)
@@ -1091,38 +1115,74 @@ def create_new_project_form(page: ft.Page):
         width=200
     )
     
-    # Risk and opportunities
-    risk1_field = ft.TextField(
-        label="Factor de Riesgo Principal", 
-        hint_text="Ej: Alta competencia en el mercado",
-        width=200
-    )
-    risk2_field = ft.TextField(
-        label="Factor de Riesgo Secundario", 
-        hint_text="Ej: Complejidad técnica alta",
-        width=200
-    )
-    risk3_field = ft.TextField(
-        label="Factor de Riesgo Adicional", 
-        hint_text="Ej: Dependencia de proveedores",
+    # Dynamic Risk and opportunities containers for new project
+    new_risk_factors_container = ft.Column([])
+    new_opportunities_container = ft.Column([])
+    
+    # Lists to store dynamic fields for new project
+    new_risk_fields = []
+    new_opp_fields = []
+    
+    def create_new_risk_field(index, value=""):
+        field = ft.TextField(
+            label=f"Factor de Riesgo {index + 1}",
+            hint_text="Ej: Alta competencia en el mercado",
+            value=value,
+            width=200
+        )
+        return field
+    
+    def create_new_opp_field(index, value=""):
+        field = ft.TextField(
+            label=f"Oportunidad {index + 1}",
+            hint_text="Ej: Mercado en crecimiento",
+            value=value,
+            width=200
+        )
+        return field
+    
+    def add_new_risk_field(e):
+        new_field = create_new_risk_field(len(new_risk_fields))
+        new_risk_fields.append(new_field)
+        new_risk_factors_container.controls.append(new_field)
+        page.update()
+    
+    def add_new_opp_field(e):
+        new_field = create_new_opp_field(len(new_opp_fields))
+        new_opp_fields.append(new_field)
+        new_opportunities_container.controls.append(new_field)
+        page.update()
+    
+    # Add initial fields
+    initial_risk = create_new_risk_field(0)
+    new_risk_fields.append(initial_risk)
+    new_risk_factors_container.controls.append(initial_risk)
+    
+    initial_opp = create_new_opp_field(0)
+    new_opp_fields.append(initial_opp)
+    new_opportunities_container.controls.append(initial_opp)
+    
+    # Add buttons to add more fields
+    add_new_risk_button = ft.ElevatedButton(
+        "+ Agregar Factor de Riesgo",
+        on_click=add_new_risk_field,
+        bgcolor="#E53E3E",
+        color=ft.Colors.WHITE,
+        height=35,
         width=200
     )
     
-    opp1_field = ft.TextField(
-        label="Oportunidad Principal", 
-        hint_text="Ej: Mercado en crecimiento",
+    add_new_opp_button = ft.ElevatedButton(
+        "+ Agregar Oportunidad",
+        on_click=add_new_opp_field,
+        bgcolor="#00BFA5",
+        color=ft.Colors.WHITE,
+        height=35,
         width=200
     )
-    opp2_field = ft.TextField(
-        label="Oportunidad Secundaria", 
-        hint_text="Ej: Cliente estratégico",
-        width=200
-    )
-    opp3_field = ft.TextField(
-        label="Oportunidad Adicional", 
-        hint_text="Ej: Tecnología innovadora",
-        width=200
-    )
+    
+    new_risk_factors_container.controls.append(add_new_risk_button)
+    new_opportunities_container.controls.append(add_new_opp_button)
     
     # Error message
     error_text = ft.Text(
@@ -1201,8 +1261,8 @@ def create_new_project_form(page: ft.Page):
             if quality_requirements_field.value: completeness_score += 1
             if regulatory_requirements_field.value: completeness_score += 1
             if dept1_dropdown.value: completeness_score += 1
-            if risk1_field.value: completeness_score += 1
-            if opp1_field.value: completeness_score += 1
+            if new_risk_fields and new_risk_fields[0].value: completeness_score += 1
+            if new_opp_fields and new_opp_fields[0].value: completeness_score += 1
             if priority_dropdown.value: completeness_score += 1
             
             initial_score = int((completeness_score / total_fields) * 100)
@@ -1229,8 +1289,8 @@ def create_new_project_form(page: ft.Page):
                 last_updated=datetime.datetime.now().strftime("%Y-%m-%d"),
                 assigned_departments=[dept for dept in [dept1_dropdown.value, dept2_dropdown.value, dept3_dropdown.value] if dept],
                 feasibility_score=initial_score,
-                risk_factors=[risk.strip() for risk in [risk1_field.value, risk2_field.value, risk3_field.value] if risk and risk.strip()],
-                opportunities=[opp.strip() for opp in [opp1_field.value, opp2_field.value, opp3_field.value] if opp and opp.strip()],
+                risk_factors=[risk.strip() for risk in [field.value for field in new_risk_fields] if risk and risk.strip()],
+                opportunities=[opp.strip() for opp in [field.value for field in new_opp_fields] if opp and opp.strip()],
                 comments=[]
             )
             
@@ -1252,8 +1312,13 @@ def create_new_project_form(page: ft.Page):
                      customer_email_field, customer_phone_field, description_field,
                      volume_field, price_field, margin_field, delivery_field,
                      tech_requirements_field, quality_requirements_field, 
-                     regulatory_requirements_field, risk1_field, risk2_field, 
-                     risk3_field, opp1_field, opp2_field, opp3_field]:
+                     regulatory_requirements_field]:
+            field.value = ""
+        
+        # Clear dynamic fields
+        for field in new_risk_fields:
+            field.value = ""
+        for field in new_opp_fields:
             field.value = ""
         
         for dropdown in [priority_dropdown, dept1_dropdown, dept2_dropdown, dept3_dropdown]:
@@ -1323,15 +1388,11 @@ def create_new_project_form(page: ft.Page):
             ], expand=True),
             ft.Column([
                 ft.Text("Factores de Riesgo", size=14, weight="bold"),
-                risk1_field,
-                risk2_field,
-                risk3_field
+                new_risk_factors_container
             ], expand=True),
             ft.Column([
                 ft.Text("Oportunidades", size=14, weight="bold"),
-                opp1_field,
-                opp2_field,
-                opp3_field
+                new_opportunities_container
             ], expand=True)
         ])
     ], scroll=ft.ScrollMode.AUTO)
@@ -1525,7 +1586,7 @@ def update_dashboard(page: ft.Page):
 
 
 def main(page: ft.Page):
-    page.title = "Sistema de Evaluación de Factibilidad"
+    page.title = "Portal de Factibilidad"
     page.bgcolor = "#F8F9FA"  # Light grey background
     page.horizontal_alignment = "stretch"
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -1543,7 +1604,7 @@ def main(page: ft.Page):
         controls=[
             ft.Row([
                 ft.Icon(ft.Icons.ASSESSMENT, color="#4A90E2", size=24),
-                ft.Text("Sistema de Evaluación de Factibilidad", size=20, weight="bold", color="#4A90E2")
+                ft.Text("Portal de Factibilidad", size=20, weight="bold", color="#4A90E2")
             ])
         ]
     )
