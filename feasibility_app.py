@@ -60,6 +60,61 @@ class ProjectInfo:
     comments: List[Dict]
     technical_drawings_pdf: List[str]
     technical_drawings_step: List[str]
+    
+    # General Information fields
+    offer_number: str = ""
+    technical_specifications_drawing_revision: str = ""
+    yearly_volume_sets: int = 0
+    drawings_included_in_offer: str = ""
+    project_life_years: int = 0
+    tool_provided_by_customer: bool = False
+    tool_characteristics_pitch: float = 0.0
+    tool_characteristics_width: float = 0.0
+    tool_characteristics_cavities: int = 0
+    tool_remaining_life: int = 0
+    target_date_first_parts: str = ""
+    target_date_ppap: str = ""
+    target_date_sop: str = ""
+    steel_requirement_processing_type: str = ""
+    steel_core_loss: float = 0.0
+    steel_thickness: float = 0.0
+    steel_coating: str = ""
+    slitted_coil_width: float = 0.0
+    
+    # Engineering fields
+    press_tonnage: float = 0.0
+    press_number: str = ""
+    production_line: str = ""
+    process_type: str = ""
+    strokes_per_minute: int = 0
+    oee: float = 0.0
+    hours_per_shift: float = 0.0
+    process_area: float = 0.0
+    aluminum_weight: float = 0.0
+    glue_primer_quantity: float = 0.0
+    general_process_flow_description: str = ""
+    tool_raw_material: str = ""
+    tool_life_guarantee: int = 0
+    
+    # Sales fields
+    steel_permeability: float = 0.0
+    master_coil_width: float = 0.0
+    thickness_tolerance: float = 0.0
+    
+    # Quality Information fields
+    measurement_method_proposal: str = ""
+    gauge_equipment_estimated_cost: float = 0.0
+    laboratory_equipment_capacity: bool = False
+    additional_equipment_required: str = ""
+    process_scrap_percentage: float = 0.0
+    
+    # Toolmaker RFQ fields
+    toolmaker_pitch: float = 0.0
+    toolmaker_width: float = 0.0
+    toolmaker_cavities: int = 0
+    toolmaker_raw_material: str = ""
+    toolmaker_life_guarantee: int = 0
+    toolmaker_lead_time_weeks: int = 0
 
 # State management class
 class FeasibilityState:
@@ -191,43 +246,55 @@ def create_project_card(project: ProjectInfo, page: ft.Page):
     def open_project_details(e):
         show_project_details_modal(page, project)
 
-    return ft.Container(
-        content=ft.Column([
-            ft.Row([
-                ft.Icon(ft.Icons.BUSINESS, color="#4A90E2", size=20),
-                ft.Text(project.project_name, weight="bold", size=16, expand=True),
-                ft.Container(
-                    content=ft.Text(project.priority, size=10, color=ft.Colors.WHITE),
-                    bgcolor=get_priority_color(project.priority),
-                    border_radius=8,
-                    padding=ft.padding.symmetric(horizontal=8, vertical=2)
-                )
-            ]),
-            ft.Text(f"Cliente: {project.customer_name}", size=12, color="#6B7280"),
-            ft.Text(f"Contacto: {project.customer_contact}", size=11, color="#6B7280"),
-            ft.Row([
-                ft.Container(
-                    content=ft.Text(project.status, size=11, color=ft.Colors.WHITE),
-                    bgcolor=get_status_color(project.status),
-                    border_radius=12,
-                    padding=ft.padding.symmetric(horizontal=10, vertical=2)
-                ),
-                ft.Text(f"Score: {project.feasibility_score}%", size=11, weight="bold", color="#4A90E2")
-            ]),
-            ft.Row([
-                ft.Icon(ft.Icons.ATTACH_MONEY, size=14, color="#00BFA5"),
-                ft.Text(f"${project.target_price:.2f}", size=11, color="#00BFA5"),
-                ft.Icon(ft.Icons.TRENDING_UP, size=14, color="#4A90E2"),
-                ft.Text(f"{project.target_margin}% margen", size=11, color="#4A90E2")
-            ]),
-            ft.Text(f"Volumen: {project.expected_volume}", size=11, color="#6B7280"),
-            ft.Text(f"Entrega: {project.delivery_date}", size=11, color="#6B7280"),
-            ft.Row([
-                ft.Icon(ft.Icons.PERSON, size=12, color="#6B7280"),
-                ft.Text(f"Por: {project.created_by}", size=10, color="#6B7280"),
-                ft.Text(f"• {project.last_updated}", size=10, color="#6B7280")
-            ])
+    # Build the column controls, filtering out None values
+    column_controls = [
+        ft.Row([
+            ft.Icon(ft.Icons.BUSINESS, color="#4A90E2", size=20),
+            ft.Text(project.project_name, weight="bold", size=16, expand=True),
+            ft.Container(
+                content=ft.Text(project.priority, size=10, color=ft.Colors.WHITE),
+                bgcolor=get_priority_color(project.priority),
+                border_radius=8,
+                padding=ft.padding.symmetric(horizontal=8, vertical=2)
+            )
         ]),
+        ft.Text(f"Cliente: {project.customer_name}", size=12, color="#6B7280"),
+        ft.Text(f"Contacto: {project.customer_contact}", size=11, color="#6B7280"),
+        ft.Row([
+            ft.Container(
+                content=ft.Text(project.status, size=11, color=ft.Colors.WHITE),
+                bgcolor=get_status_color(project.status),
+                border_radius=12,
+                padding=ft.padding.symmetric(horizontal=10, vertical=2)
+            ),
+            ft.Text(f"Score: {project.feasibility_score}%", size=11, weight="bold", color="#4A90E2")
+        ]),
+        ft.Row([
+            ft.Icon(ft.Icons.ATTACH_MONEY, size=14, color="#00BFA5"),
+            ft.Text(f"${project.target_price:.2f}", size=11, color="#00BFA5"),
+            ft.Icon(ft.Icons.TRENDING_UP, size=14, color="#4A90E2"),
+            ft.Text(f"{project.target_margin}% margen", size=11, color="#4A90E2")
+        ]),
+        ft.Text(f"Volumen: {project.expected_volume}", size=11, color="#6B7280"),
+        ft.Text(f"Entrega: {project.delivery_date}", size=11, color="#6B7280"),
+        ft.Row([
+            ft.Icon(ft.Icons.PERSON, size=12, color="#6B7280"),
+            ft.Text(f"Por: {project.created_by}", size=10, color="#6B7280"),
+            ft.Text(f"• {project.last_updated}", size=10, color="#6B7280")
+        ])
+    ]
+    
+    # Add additional information row only if data is available
+    if project.press_number or project.oee:
+        column_controls.insert(-1, ft.Row([
+            ft.Icon(ft.Icons.ENGINEERING, size=12, color="#F5A623"),
+            ft.Text(f"Prensa: {project.press_number if project.press_number else 'N/A'}", size=10, color="#6B7280"),
+            ft.Icon(ft.Icons.SCHEDULE, size=12, color="#4A90E2"),
+            ft.Text(f"OEE: {project.oee if project.oee else 'N/A'}", size=10, color="#6B7280")
+        ]))
+
+    return ft.Container(
+        content=ft.Column(column_controls),
         bgcolor=ft.Colors.WHITE,
         border_radius=10,
         padding=15,
@@ -352,6 +419,116 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
             
             ft.Divider(),
             
+            # General Information
+            ft.Row([
+                ft.Column([
+                    ft.Text("Información General", size=16, weight="bold", color="#4A90E2"),
+                    ft.Text(f"Número de Oferta: {project.offer_number if project.offer_number else 'No especificado'}", size=12),
+                    ft.Text(f"Especificaciones Técnicas: {project.technical_specifications_drawing_revision if project.technical_specifications_drawing_revision else 'No especificado'}", size=12),
+                    ft.Text(f"Volumen Anual (Sets): {project.yearly_volume_sets if project.yearly_volume_sets else 'No especificado'}", size=12),
+                    ft.Text(f"Vida del Proyecto: {project.project_life_years if project.project_life_years else 'No especificado'} años", size=12),
+                    ft.Text(f"Herramienta del Cliente: {'Sí' if project.tool_provided_by_customer else 'No'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Características de Herramienta", size=16, weight="bold", color="#4A90E2"),
+                    ft.Text(f"Pitch: {project.tool_characteristics_pitch if project.tool_characteristics_pitch else 'No especificado'}", size=12),
+                    ft.Text(f"Ancho: {project.tool_characteristics_width if project.tool_characteristics_width else 'No especificado'}", size=12),
+                    ft.Text(f"Cavidades: {project.tool_characteristics_cavities if project.tool_characteristics_cavities else 'No especificado'}", size=12),
+                    ft.Text(f"Vida Restante: {project.tool_remaining_life if project.tool_remaining_life else 'No especificado'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Fechas Objetivo", size=16, weight="bold", color="#4A90E2"),
+                    ft.Text(f"Primeras Piezas: {project.target_date_first_parts if project.target_date_first_parts else 'No especificado'}", size=12),
+                    ft.Text(f"PPAP: {project.target_date_ppap if project.target_date_ppap else 'No especificado'}", size=12),
+                    ft.Text(f"SOP: {project.target_date_sop if project.target_date_sop else 'No especificado'}", size=12)
+                ], expand=True)
+            ]),
+            
+            ft.Divider(),
+            
+            # Engineering Information
+            ft.Row([
+                ft.Column([
+                    ft.Text("Información de Ingeniería", size=16, weight="bold", color="#F5A623"),
+                    ft.Text(f"Tonelaje de Prensa: {project.press_tonnage if project.press_tonnage else 'No especificado'}", size=12),
+                    ft.Text(f"Número de Prensa: {project.press_number if project.press_number else 'No especificado'}", size=12),
+                    ft.Text(f"Línea de Producción: {project.production_line if project.production_line else 'No especificado'}", size=12),
+                    ft.Text(f"Tipo de Proceso: {project.process_type if project.process_type else 'No especificado'}", size=12),
+                    ft.Text(f"Golpes por Minuto: {project.strokes_per_minute if project.strokes_per_minute else 'No especificado'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Eficiencia y Capacidad", size=16, weight="bold", color="#F5A623"),
+                    ft.Text(f"OEE: {project.oee if project.oee else 'No especificado'}", size=12),
+                    ft.Text(f"Horas por Turno: {project.hours_per_shift if project.hours_per_shift else 'No especificado'}", size=12),
+                    ft.Text(f"Área de Proceso: {project.process_area if project.process_area else 'No especificado'} mm²", size=12),
+                    ft.Text(f"Peso de Aluminio: {project.aluminum_weight if project.aluminum_weight else 'No especificado'} kg", size=12),
+                    ft.Text(f"Cantidad de Pegamento: {project.glue_primer_quantity if project.glue_primer_quantity else 'No especificado'} ml", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Herramienta y Material", size=16, weight="bold", color="#F5A623"),
+                    ft.Text(f"Materia Prima: {project.tool_raw_material if project.tool_raw_material else 'No especificado'}", size=12),
+                    ft.Text(f"Garantía de Vida: {project.tool_life_guarantee if project.tool_life_guarantee else 'No especificado'} millones de golpes", size=12),
+                    ft.Text(f"Descripción del Proceso: {project.general_process_flow_description if project.general_process_flow_description else 'No especificado'}", size=12)
+                ], expand=True)
+            ]),
+            
+            ft.Divider(),
+            
+            # Sales Information
+            ft.Row([
+                ft.Column([
+                    ft.Text("Información de Ventas", size=16, weight="bold", color="#00BFA5"),
+                    ft.Text(f"Permeabilidad del Acero: {project.steel_permeability if project.steel_permeability else 'No especificado'}", size=12),
+                    ft.Text(f"Ancho de Bobina Maestra: {project.master_coil_width if project.master_coil_width else 'No especificado'}", size=12),
+                    ft.Text(f"Tolerancia de Espesor: {project.thickness_tolerance if project.thickness_tolerance else 'No especificado'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Información de Acero", size=16, weight="bold", color="#00BFA5"),
+                    ft.Text(f"Tipo de Procesamiento: {project.steel_requirement_processing_type if project.steel_requirement_processing_type else 'No especificado'}", size=12),
+                    ft.Text(f"Pérdida de Núcleo: {project.steel_core_loss if project.steel_core_loss else 'No especificado'}", size=12),
+                    ft.Text(f"Espesor: {project.steel_thickness if project.steel_thickness else 'No especificado'}", size=12),
+                    ft.Text(f"Recubrimiento: {project.steel_coating if project.steel_coating else 'No especificado'}", size=12),
+                    ft.Text(f"Ancho de Bobina Cortada: {project.slitted_coil_width if project.slitted_coil_width else 'No especificado'}", size=12)
+                ], expand=True)
+            ]),
+            
+            ft.Divider(),
+            
+            # Quality Information
+            ft.Row([
+                ft.Column([
+                    ft.Text("Información de Calidad", size=16, weight="bold", color="#F5A623"),
+                    ft.Text(f"Método de Medición: {project.measurement_method_proposal if project.measurement_method_proposal else 'No especificado'}", size=12),
+                    ft.Text(f"Costo de Medidores: ${project.gauge_equipment_estimated_cost if project.gauge_equipment_estimated_cost else 'No especificado'}", size=12),
+                    ft.Text(f"Capacidad de Laboratorio: {'Sí' if project.laboratory_equipment_capacity else 'No'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Equipos y Proceso", size=16, weight="bold", color="#F5A623"),
+                    ft.Text(f"Equipos Adicionales: {project.additional_equipment_required if project.additional_equipment_required else 'No especificado'}", size=12),
+                    ft.Text(f"Desperdicio del Proceso: {project.process_scrap_percentage if project.process_scrap_percentage else 'No especificado'}%", size=12)
+                ], expand=True)
+            ]),
+            
+            ft.Divider(),
+            
+            # Toolmaker RFQ Information
+            ft.Row([
+                ft.Column([
+                    ft.Text("RFQ del Fabricante de Herramientas", size=16, weight="bold", color="#9C27B0"),
+                    ft.Text(f"Pitch: {project.toolmaker_pitch if project.toolmaker_pitch else 'No especificado'}", size=12),
+                    ft.Text(f"Ancho: {project.toolmaker_width if project.toolmaker_width else 'No especificado'}", size=12),
+                    ft.Text(f"Cavidades: {project.toolmaker_cavities if project.toolmaker_cavities else 'No especificado'}", size=12)
+                ], expand=True),
+                ft.Column([
+                    ft.Text("Especificaciones del Fabricante", size=16, weight="bold", color="#9C27B0"),
+                    ft.Text(f"Materia Prima: {project.toolmaker_raw_material if project.toolmaker_raw_material else 'No especificado'}", size=12),
+                    ft.Text(f"Garantía de Vida: {project.toolmaker_life_guarantee if project.toolmaker_life_guarantee else 'No especificado'} millones de golpes", size=12),
+                    ft.Text(f"Tiempo de Entrega: {project.toolmaker_lead_time_weeks if project.toolmaker_lead_time_weeks else 'No especificado'} semanas", size=12)
+                ], expand=True)
+            ]),
+            
+            ft.Divider(),
+            
             # Risk and opportunities
             ft.Row([
                 ft.Column([
@@ -425,23 +602,14 @@ def close_modal(modal, page: ft.Page):
     global current_modal
     
     try:
-        # Hide the modal by setting visibility to False
-        if hasattr(modal, 'visible'):
-            modal.visible = False
-        
-        # Remove from overlay if it exists
-        if modal in page.overlay:
-            page.overlay.remove(modal)
-        
-        # Clear global reference
+        # Clear global reference first
         if current_modal == modal:
             current_modal = None
         
-        # Force a complete page refresh
-        page.update()
-        
-        # Additional cleanup - ensure overlay is completely clear
+        # Clear all overlays to prevent conflicts
         page.overlay.clear()
+        
+        # Force a complete page refresh
         page.update()
         
         print("Modal closed successfully")
@@ -891,9 +1059,28 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
         expand=True
     )
 
-    # Create a custom modal using Container for better control
+    # Create scrollable content (without buttons)
+    scrollable_content = ft.Column([
+        error_text,
+        tabs
+    ], scroll=ft.ScrollMode.AUTO, expand=True)
+    
+    # Create modal with proper content first
     modal = ft.Container(
-        content=None,  # Will be set below
+        content=ft.Column([
+            # Modal header
+            ft.Row([
+                ft.Text("Editar Proyecto", size=18, weight="bold", expand=True),
+                ft.IconButton(
+                    ft.Icons.CLOSE,
+                    on_click=lambda e: close_modal(modal, page),
+                    tooltip="Cerrar"
+                )
+            ]),
+            ft.Divider(),
+            # Modal content placeholder
+            ft.Column([], expand=True)
+        ], expand=True),
         bgcolor=ft.Colors.WHITE,
         border_radius=10,
         padding=20,
@@ -902,8 +1089,8 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
         shadow=ft.BoxShadow(blur_radius=20, spread_radius=5, color=ft.Colors.BLACK26),
         visible=True
     )
-
-    # Create buttons first for testing
+    
+    # Create buttons after modal is defined
     cancel_button = ft.ElevatedButton(
         "Cancelar",
         icon=ft.Icons.CANCEL,
@@ -924,12 +1111,6 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
         width=200
     )
     
-    # Create scrollable content (without buttons)
-    scrollable_content = ft.Column([
-        error_text,
-        tabs
-    ], scroll=ft.ScrollMode.AUTO, expand=True)
-    
     # Create modal content with fixed buttons at bottom
     modal_content = ft.Column([
         scrollable_content,
@@ -944,22 +1125,9 @@ def edit_project_modal(page: ft.Page, project: ProjectInfo):
             border_radius=5
         )
     ], expand=True)
-
+    
     # Update modal content
-    modal.content = ft.Column([
-        # Modal header
-        ft.Row([
-            ft.Text("Editar Proyecto", size=18, weight="bold", expand=True),
-            ft.IconButton(
-                ft.Icons.CLOSE,
-                on_click=lambda e: close_modal(modal, page),
-                tooltip="Cerrar"
-            )
-        ]),
-        ft.Divider(),
-        # Modal content
-        modal_content
-    ], expand=True)
+    modal.content.controls[2] = modal_content
     
     # Create overlay background
     overlay = ft.Container(
@@ -1401,7 +1569,57 @@ def create_new_project_form(page: ft.Page):
                 opportunities=[opp.strip() for opp in [field.value for field in new_opp_fields] if opp and opp.strip()],
                 comments=[],
                 technical_drawings_pdf=pdf_files.copy(),
-                technical_drawings_step=step_files.copy()
+                technical_drawings_step=step_files.copy(),
+                # General Information fields
+                offer_number=offer_number_field.value.strip() if offer_number_field.value else "",
+                technical_specifications_drawing_revision=technical_specs_field.value.strip() if technical_specs_field.value else "",
+                yearly_volume_sets=int(yearly_volume_field.value) if yearly_volume_field.value else 0,
+                drawings_included_in_offer=drawings_included_field.value.strip() if drawings_included_field.value else "",
+                project_life_years=int(project_life_field.value) if project_life_field.value else 0,
+                tool_provided_by_customer=tool_provided_checkbox.value,
+                tool_characteristics_pitch=float(tool_pitch_field.value) if tool_pitch_field.value else 0.0,
+                tool_characteristics_width=float(tool_width_field.value) if tool_width_field.value else 0.0,
+                tool_characteristics_cavities=int(tool_cavities_field.value) if tool_cavities_field.value else 0,
+                tool_remaining_life=int(tool_remaining_life_field.value) if tool_remaining_life_field.value else 0,
+                target_date_first_parts=target_first_parts_field.value.strip() if target_first_parts_field.value else "",
+                target_date_ppap=target_ppap_field.value.strip() if target_ppap_field.value else "",
+                target_date_sop=target_sop_field.value.strip() if target_sop_field.value else "",
+                steel_requirement_processing_type=steel_processing_type_field.value.strip() if steel_processing_type_field.value else "",
+                steel_core_loss=float(steel_core_loss_field.value) if steel_core_loss_field.value else 0.0,
+                steel_thickness=float(steel_thickness_field.value) if steel_thickness_field.value else 0.0,
+                steel_coating=steel_coating_field.value.strip() if steel_coating_field.value else "",
+                slitted_coil_width=float(slitted_coil_width_field.value) if slitted_coil_width_field.value else 0.0,
+                # Engineering fields
+                press_tonnage=float(press_tonnage_field.value) if press_tonnage_field.value else 0.0,
+                press_number=press_number_field.value.strip() if press_number_field.value else "",
+                production_line=production_line_field.value.strip() if production_line_field.value else "",
+                process_type=process_type_dropdown.value if process_type_dropdown.value else "",
+                strokes_per_minute=int(strokes_per_minute_field.value) if strokes_per_minute_field.value else 0,
+                oee=float(oee_field.value) if oee_field.value else 0.0,
+                hours_per_shift=float(hours_per_shift_field.value) if hours_per_shift_field.value else 0.0,
+                process_area=float(process_area_field.value) if process_area_field.value else 0.0,
+                aluminum_weight=float(aluminum_weight_field.value) if aluminum_weight_field.value else 0.0,
+                glue_primer_quantity=float(glue_primer_quantity_field.value) if glue_primer_quantity_field.value else 0.0,
+                general_process_flow_description=general_process_flow_field.value.strip() if general_process_flow_field.value else "",
+                tool_raw_material=tool_raw_material_dropdown.value if tool_raw_material_dropdown.value else "",
+                tool_life_guarantee=int(tool_life_guarantee_field.value) if tool_life_guarantee_field.value else 0,
+                # Sales fields
+                steel_permeability=float(steel_permeability_field.value) if steel_permeability_field.value else 0.0,
+                master_coil_width=float(master_coil_width_field.value) if master_coil_width_field.value else 0.0,
+                thickness_tolerance=float(thickness_tolerance_field.value) if thickness_tolerance_field.value else 0.0,
+                # Quality Information fields
+                measurement_method_proposal=measurement_method_field.value.strip() if measurement_method_field.value else "",
+                gauge_equipment_estimated_cost=float(gauge_equipment_cost_field.value) if gauge_equipment_cost_field.value else 0.0,
+                laboratory_equipment_capacity=laboratory_capacity_checkbox.value,
+                additional_equipment_required=additional_equipment_field.value.strip() if additional_equipment_field.value else "",
+                process_scrap_percentage=float(process_scrap_field.value) if process_scrap_field.value else 0.0,
+                # Toolmaker RFQ fields
+                toolmaker_pitch=float(toolmaker_pitch_field.value) if toolmaker_pitch_field.value else 0.0,
+                toolmaker_width=float(toolmaker_width_field.value) if toolmaker_width_field.value else 0.0,
+                toolmaker_cavities=int(toolmaker_cavities_field.value) if toolmaker_cavities_field.value else 0,
+                toolmaker_raw_material=toolmaker_raw_material_dropdown.value if toolmaker_raw_material_dropdown.value else "",
+                toolmaker_life_guarantee=int(toolmaker_life_guarantee_field.value) if toolmaker_life_guarantee_field.value else 0,
+                toolmaker_lead_time_weeks=int(toolmaker_lead_time_field.value) if toolmaker_lead_time_field.value else 0
             )
             
             state.add_project(new_project)
@@ -1442,6 +1660,97 @@ def create_new_project_form(page: ft.Page):
         error_text.visible = False
         page.update()
 
+    # Additional General Information fields
+    offer_number_field = ft.TextField(
+        label="Número de Oferta",
+        hint_text="Ej: OF-2024-001",
+        width=300
+    )
+    technical_specs_field = ft.TextField(
+        label="Especificaciones Técnicas / Revisión de Dibujo",
+        hint_text="Ej: Rev. A",
+        width=300
+    )
+    yearly_volume_field = ft.TextField(
+        label="Volumen Anual (Sets)",
+        hint_text="25000",
+        width=300
+    )
+    drawings_included_field = ft.TextField(
+        label="Dibujos Incluidos en la Oferta",
+        hint_text="Lista de dibujos incluidos",
+        width=300
+    )
+    project_life_field = ft.TextField(
+        label="Vida del Proyecto (Años)",
+        hint_text="5",
+        width=300
+    )
+    tool_provided_checkbox = ft.Checkbox(
+        label="Herramienta Proporcionada por el Cliente",
+        value=False
+    )
+    tool_pitch_field = ft.TextField(
+        label="Características de Herramienta - Pitch",
+        hint_text="0.0",
+        width=300
+    )
+    tool_width_field = ft.TextField(
+        label="Características de Herramienta - Ancho",
+        hint_text="0.0",
+        width=300
+    )
+    tool_cavities_field = ft.TextField(
+        label="Características de Herramienta - Cavidades",
+        hint_text="0",
+        width=300
+    )
+    tool_remaining_life_field = ft.TextField(
+        label="Vida Restante de Herramienta",
+        hint_text="0",
+        width=300
+    )
+    target_first_parts_field = ft.TextField(
+        label="Fecha Objetivo - Primeras Piezas",
+        hint_text="2024-06-30",
+        width=300
+    )
+    target_ppap_field = ft.TextField(
+        label="Fecha Objetivo - PPAP",
+        hint_text="2024-07-15",
+        width=300
+    )
+    target_sop_field = ft.TextField(
+        label="Fecha Objetivo - SOP",
+        hint_text="2024-08-01",
+        width=300
+    )
+    steel_processing_type_field = ft.TextField(
+        label="Tipo de Procesamiento de Acero",
+        hint_text="Ej: Laminado en frío",
+        width=300
+    )
+    steel_core_loss_field = ft.TextField(
+        label="Pérdida de Núcleo de Acero",
+        hint_text="0.0",
+        width=300
+    )
+    steel_thickness_field = ft.TextField(
+        label="Espesor de Acero",
+        hint_text="0.0",
+        width=300
+    )
+    steel_coating_field = ft.TextField(
+        label="Recubrimiento de Acero",
+        hint_text="Ej: Galvanizado",
+        width=300
+    )
+    slitted_coil_width_field = ft.TextField(
+        label="Ancho de Bobina Cortada",
+        hint_text="0.0",
+        width=300
+    )
+
     # Create tabbed interface for better organization
     basic_info_tab = ft.Column([
         ft.Text("Información Básica del Proyecto", size=16, weight="bold", color="#4A90E2"),
@@ -1459,6 +1768,34 @@ def create_new_project_form(page: ft.Page):
                 description_field,
                 project_type_dropdown,
                 priority_dropdown
+            ], expand=True)
+        ]),
+        ft.Divider(),
+        ft.Text("Información General del Proyecto", size=16, weight="bold", color="#4A90E2"),
+        ft.Row([
+            ft.Column([
+                offer_number_field,
+                technical_specs_field,
+                yearly_volume_field,
+                drawings_included_field,
+                project_life_field,
+                tool_provided_checkbox
+            ], expand=True),
+            ft.Column([
+                tool_pitch_field,
+                tool_width_field,
+                tool_cavities_field,
+                tool_remaining_life_field,
+                target_first_parts_field,
+                target_ppap_field,
+                target_sop_field
+            ], expand=True),
+            ft.Column([
+                steel_processing_type_field,
+                steel_core_loss_field,
+                steel_thickness_field,
+                steel_coating_field,
+                slitted_coil_width_field
             ], expand=True)
         ])
     ], scroll=ft.ScrollMode.AUTO)
@@ -1479,6 +1816,83 @@ def create_new_project_form(page: ft.Page):
         ])
     ], scroll=ft.ScrollMode.AUTO)
     
+    # Engineering fields
+    press_tonnage_field = ft.TextField(
+        label="Tonelaje de Prensa",
+        hint_text="0.0",
+        width=300
+    )
+    press_number_field = ft.TextField(
+        label="Número de Prensa",
+        hint_text="Ej: P001",
+        width=300
+    )
+    production_line_field = ft.TextField(
+        label="Línea de Producción",
+        hint_text="Ej: Línea A",
+        width=300
+    )
+    process_type_dropdown = ft.Dropdown(
+        label="Tipo de Proceso",
+        options=[
+            ft.dropdown.Option("Blanking"),
+            ft.dropdown.Option("Die Casting"),
+            ft.dropdown.Option("Other")
+        ],
+        width=300
+    )
+    strokes_per_minute_field = ft.TextField(
+        label="Golpes por Minuto",
+        hint_text="0",
+        width=300
+    )
+    oee_field = ft.TextField(
+        label="OEE (Efectividad General del Equipo)",
+        hint_text="0.0",
+        width=300
+    )
+    hours_per_shift_field = ft.TextField(
+        label="Horas por Turno",
+        hint_text="8.0",
+        width=300
+    )
+    process_area_field = ft.TextField(
+        label="Área de Proceso (mm²)",
+        hint_text="0.0",
+        width=300
+    )
+    aluminum_weight_field = ft.TextField(
+        label="Peso de Aluminio (kg)",
+        hint_text="0.0",
+        width=300
+    )
+    glue_primer_quantity_field = ft.TextField(
+        label="Cantidad de Pegamento y Primario (ml)",
+        hint_text="0.0",
+        width=300
+    )
+    general_process_flow_field = ft.TextField(
+        label="Descripción General del Flujo de Proceso",
+        hint_text="Descripción del proceso",
+        multiline=True,
+        max_lines=3,
+        width=300
+    )
+    tool_raw_material_dropdown = ft.Dropdown(
+        label="Materia Prima de Herramienta",
+        options=[
+            ft.dropdown.Option("Acero"),
+            ft.dropdown.Option("Carburo"),
+            ft.dropdown.Option("Otro")
+        ],
+        width=300
+    )
+    tool_life_guarantee_field = ft.TextField(
+        label="Garantía de Vida de Herramienta (Millones de Golpes)",
+        hint_text="0",
+        width=300
+    )
+
     technical_tab = ft.Column([
         ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color="#F5A623"),
         ft.Row([
@@ -1488,6 +1902,29 @@ def create_new_project_form(page: ft.Page):
             ], expand=True),
             ft.Column([
                 regulatory_requirements_field
+            ], expand=True)
+        ]),
+        ft.Divider(),
+        ft.Text("Información de Ingeniería", size=16, weight="bold", color="#F5A623"),
+        ft.Row([
+            ft.Column([
+                press_tonnage_field,
+                press_number_field,
+                production_line_field,
+                process_type_dropdown,
+                strokes_per_minute_field,
+                oee_field
+            ], expand=True),
+            ft.Column([
+                hours_per_shift_field,
+                process_area_field,
+                aluminum_weight_field,
+                glue_primer_quantity_field,
+                tool_raw_material_dropdown,
+                tool_life_guarantee_field
+            ], expand=True),
+            ft.Column([
+                general_process_flow_field
             ], expand=True)
         ]),
         ft.Divider(),
@@ -1526,6 +1963,134 @@ def create_new_project_form(page: ft.Page):
         ])
     ], scroll=ft.ScrollMode.AUTO)
     
+    # Sales fields
+    steel_permeability_field = ft.TextField(
+        label="Permeabilidad del Acero",
+        hint_text="0.0",
+        width=300
+    )
+    master_coil_width_field = ft.TextField(
+        label="Ancho de Bobina Maestra",
+        hint_text="0.0",
+        width=300
+    )
+    thickness_tolerance_field = ft.TextField(
+        label="Tolerancia de Espesor",
+        hint_text="0.0",
+        width=300
+    )
+
+    # Quality Information fields
+    measurement_method_field = ft.TextField(
+        label="Propuesta de Método de Medición",
+        hint_text="Descripción del método",
+        multiline=True,
+        max_lines=3,
+        width=300
+    )
+    gauge_equipment_cost_field = ft.TextField(
+        label="Costo Estimado de Medidores y Equipos",
+        hint_text="0.0",
+        width=300
+    )
+    laboratory_capacity_checkbox = ft.Checkbox(
+        label="Capacidad de Equipos de Laboratorio",
+        value=False
+    )
+    additional_equipment_field = ft.TextField(
+        label="Equipos Adicionales Requeridos",
+        hint_text="Lista de equipos",
+        multiline=True,
+        max_lines=3,
+        width=300
+    )
+    process_scrap_field = ft.TextField(
+        label="Desperdicio del Proceso (%)",
+        hint_text="0.0",
+        width=300
+    )
+
+    # Toolmaker RFQ fields
+    toolmaker_pitch_field = ft.TextField(
+        label="Pitch del Fabricante de Herramientas",
+        hint_text="0.0",
+        width=300
+    )
+    toolmaker_width_field = ft.TextField(
+        label="Ancho del Fabricante de Herramientas",
+        hint_text="0.0",
+        width=300
+    )
+    toolmaker_cavities_field = ft.TextField(
+        label="Cavidades del Fabricante de Herramientas",
+        hint_text="0",
+        width=300
+    )
+    toolmaker_raw_material_dropdown = ft.Dropdown(
+        label="Materia Prima del Fabricante de Herramientas",
+        options=[
+            ft.dropdown.Option("Acero"),
+            ft.dropdown.Option("Carburo"),
+            ft.dropdown.Option("Otro")
+        ],
+        width=300
+    )
+    toolmaker_life_guarantee_field = ft.TextField(
+        label="Garantía de Vida del Fabricante (Millones de Golpes)",
+        hint_text="0",
+        width=300
+    )
+    toolmaker_lead_time_field = ft.TextField(
+        label="Tiempo de Entrega del Fabricante (semanas)",
+        hint_text="0",
+        width=300
+    )
+
+    # Sales tab
+    sales_tab = ft.Column([
+        ft.Text("Información de Ventas", size=16, weight="bold", color="#00BFA5"),
+        ft.Row([
+            ft.Column([
+                steel_permeability_field,
+                master_coil_width_field,
+                thickness_tolerance_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+
+    # Quality Information tab
+    quality_tab = ft.Column([
+        ft.Text("Información de Calidad", size=16, weight="bold", color="#F5A623"),
+        ft.Row([
+            ft.Column([
+                measurement_method_field,
+                gauge_equipment_cost_field,
+                laboratory_capacity_checkbox
+            ], expand=True),
+            ft.Column([
+                additional_equipment_field,
+                process_scrap_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+
+    # Toolmaker RFQ tab
+    toolmaker_tab = ft.Column([
+        ft.Text("RFQ del Fabricante de Herramientas", size=16, weight="bold", color="#9C27B0"),
+        ft.Row([
+            ft.Column([
+                toolmaker_pitch_field,
+                toolmaker_width_field,
+                toolmaker_cavities_field
+            ], expand=True),
+            ft.Column([
+                toolmaker_raw_material_dropdown,
+                toolmaker_life_guarantee_field,
+                toolmaker_lead_time_field
+            ], expand=True)
+        ])
+    ], scroll=ft.ScrollMode.AUTO)
+
     team_tab = ft.Column([
         ft.Text("Asignación de Equipos y Evaluación", size=16, weight="bold", color=ft.Colors.PURPLE),
         ft.Row([
@@ -1566,6 +2131,21 @@ def create_new_project_form(page: ft.Page):
                 content=technical_tab
             ),
             ft.Tab(
+                text="Ventas",
+                icon=ft.Icons.SHOPPING_CART,
+                content=sales_tab
+            ),
+            ft.Tab(
+                text="Información de Calidad",
+                icon=ft.Icons.VERIFIED,
+                content=quality_tab
+            ),
+            ft.Tab(
+                text="RFQ Fabricante",
+                icon=ft.Icons.BUILD,
+                content=toolmaker_tab
+            ),
+            ft.Tab(
                 text="Equipos y Evaluación",
                 icon=ft.Icons.GROUP,
                 content=team_tab
@@ -1574,9 +2154,28 @@ def create_new_project_form(page: ft.Page):
         expand=True
     )
 
-    # Create a custom modal using Container for better control
+    # Create scrollable content (without buttons)
+    scrollable_content = ft.Column([
+        error_text,
+        tabs
+    ], scroll=ft.ScrollMode.AUTO, expand=True)
+    
+    # Create modal with proper content first
     modal = ft.Container(
-        content=None,  # Will be set below
+        content=ft.Column([
+            # Modal header
+            ft.Row([
+                ft.Text("Nuevo Proyecto de Factibilidad", size=18, weight="bold", expand=True),
+                ft.IconButton(
+                    ft.Icons.CLOSE,
+                    on_click=lambda e: close_modal(modal, page),
+                    tooltip="Cerrar"
+                )
+            ]),
+            ft.Divider(),
+            # Modal content placeholder
+            ft.Column([], expand=True)
+        ], expand=True),
         bgcolor=ft.Colors.WHITE,
         border_radius=10,
         padding=20,
@@ -1585,8 +2184,8 @@ def create_new_project_form(page: ft.Page):
         shadow=ft.BoxShadow(blur_radius=20, spread_radius=5, color=ft.Colors.BLACK26),
         visible=True
     )
-
-    # Create buttons first for testing
+    
+    # Create buttons after modal is defined
     cancel_button = ft.ElevatedButton(
         "Cancelar",
         icon=ft.Icons.CANCEL,
@@ -1607,12 +2206,6 @@ def create_new_project_form(page: ft.Page):
         width=200
     )
     
-    # Create scrollable content (without buttons)
-    scrollable_content = ft.Column([
-        error_text,
-        tabs
-    ], scroll=ft.ScrollMode.AUTO, expand=True)
-    
     # Create modal content with fixed buttons at bottom
     modal_content = ft.Column([
         scrollable_content,
@@ -1627,22 +2220,9 @@ def create_new_project_form(page: ft.Page):
             border_radius=5
         )
     ], expand=True)
-
+    
     # Update modal content
-    modal.content = ft.Column([
-        # Modal header
-        ft.Row([
-            ft.Text("Nuevo Proyecto de Factibilidad", size=18, weight="bold", expand=True),
-            ft.IconButton(
-                ft.Icons.CLOSE,
-                on_click=lambda e: close_modal(modal, page),
-                tooltip="Cerrar"
-            )
-        ]),
-        ft.Divider(),
-        # Modal content
-        modal_content
-    ], expand=True)
+    modal.content.controls[2] = modal_content
     
     # Create overlay background
     overlay = ft.Container(
