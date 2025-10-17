@@ -427,14 +427,13 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
                     ft.Text(f"Especificaciones Técnicas: {project.technical_specifications_drawing_revision if project.technical_specifications_drawing_revision else 'No especificado'}", size=12),
                     ft.Text(f"Volumen Anual (Sets): {project.yearly_volume_sets if project.yearly_volume_sets else 'No especificado'}", size=12),
                     ft.Text(f"Vida del Proyecto: {project.project_life_years if project.project_life_years else 'No especificado'} años", size=12),
-                    ft.Text(f"Herramienta del Cliente: {'Sí' if project.tool_provided_by_customer else 'No'}", size=12)
+                    ft.Text(f"Tool proporcionado por Cliente: {'Sí' if project.tool_provided_by_customer else 'No'}", size=12)
                 ], expand=True),
                 ft.Column([
-                    ft.Text("Características de Herramienta", size=16, weight="bold", color="#4A90E2"),
+                    ft.Text("Características de Tool", size=16, weight="bold", color="#4A90E2"),
                     ft.Text(f"Pitch: {project.tool_characteristics_pitch if project.tool_characteristics_pitch else 'No especificado'}", size=12),
                     ft.Text(f"Ancho: {project.tool_characteristics_width if project.tool_characteristics_width else 'No especificado'}", size=12),
                     ft.Text(f"Cavidades: {project.tool_characteristics_cavities if project.tool_characteristics_cavities else 'No especificado'}", size=12),
-                    ft.Text(f"Vida Restante: {project.tool_remaining_life if project.tool_remaining_life else 'No especificado'}", size=12)
                 ], expand=True),
                 ft.Column([
                     ft.Text("Fechas Objetivo", size=16, weight="bold", color="#4A90E2"),
@@ -454,20 +453,19 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
                     ft.Text(f"Número de Prensa: {project.press_number if project.press_number else 'No especificado'}", size=12),
                     ft.Text(f"Línea de Producción: {project.production_line if project.production_line else 'No especificado'}", size=12),
                     ft.Text(f"Tipo de Proceso: {project.process_type if project.process_type else 'No especificado'}", size=12),
-                    ft.Text(f"Golpes por Minuto: {project.strokes_per_minute if project.strokes_per_minute else 'No especificado'}", size=12)
+                    ft.Text(f"SPM vendidos: {project.strokes_per_minute if project.strokes_per_minute else 'No especificado'}", size=12)
                 ], expand=True),
                 ft.Column([
                     ft.Text("Eficiencia y Capacidad", size=16, weight="bold", color="#F5A623"),
                     ft.Text(f"OEE: {project.oee if project.oee else 'No especificado'}", size=12),
                     ft.Text(f"Horas por Turno: {project.hours_per_shift if project.hours_per_shift else 'No especificado'}", size=12),
-                    ft.Text(f"Área de Proceso: {project.process_area if project.process_area else 'No especificado'} mm²", size=12),
-                    ft.Text(f"Peso de Aluminio: {project.aluminum_weight if project.aluminum_weight else 'No especificado'} kg", size=12),
-                    ft.Text(f"Cantidad de Pegamento: {project.glue_primer_quantity if project.glue_primer_quantity else 'No especificado'} ml", size=12)
+                    ft.Text(f"Área de láminas: {project.process_area if project.process_area else 'No especificado'} mm²", size=12),
+                    ft.Text(f"Cantidad de Glue: {project.glue_primer_quantity if project.glue_primer_quantity else 'No especificado'} ml", size=12)
                 ], expand=True),
                 ft.Column([
                     ft.Text("Herramienta y Material", size=16, weight="bold", color="#F5A623"),
-                    ft.Text(f"Materia Prima: {project.tool_raw_material if project.tool_raw_material else 'No especificado'}", size=12),
-                    ft.Text(f"Garantía de Vida: {project.tool_life_guarantee if project.tool_life_guarantee else 'No especificado'} millones de golpes", size=12),
+                    ft.Text(f"Material del tool: {project.tool_raw_material if project.tool_raw_material else 'No especificado'}", size=12),
+                    ft.Text(f"Golpes garantizados Tool: {project.tool_life_guarantee if project.tool_life_guarantee else 'No especificado'} millones de golpes", size=12),
                     ft.Text(f"Descripción del Proceso: {project.general_process_flow_description if project.general_process_flow_description else 'No especificado'}", size=12)
                 ], expand=True)
             ]),
@@ -479,16 +477,14 @@ def show_project_details_modal(page: ft.Page, project: ProjectInfo):
                 ft.Column([
                     ft.Text("Información de Ventas", size=16, weight="bold", color="#00BFA5"),
                     ft.Text(f"Permeabilidad del Acero: {project.steel_permeability if project.steel_permeability else 'No especificado'}", size=12),
-                    ft.Text(f"Ancho de Bobina Maestra: {project.master_coil_width if project.master_coil_width else 'No especificado'}", size=12),
-                    ft.Text(f"Tolerancia de Espesor: {project.thickness_tolerance if project.thickness_tolerance else 'No especificado'}", size=12)
+                    ft.Text(f"Ancho de Master Coil: {project.master_coil_width if project.master_coil_width else 'No especificado'}", size=12),
+                    ft.Text(f"Tolerancia de Espesor Acero: {project.thickness_tolerance if project.thickness_tolerance else 'No especificado'}", size=12)
                 ], expand=True),
                 ft.Column([
                     ft.Text("Información de Acero", size=16, weight="bold", color="#00BFA5"),
-                    ft.Text(f"Tipo de Procesamiento: {project.steel_requirement_processing_type if project.steel_requirement_processing_type else 'No especificado'}", size=12),
-                    ft.Text(f"Pérdida de Núcleo: {project.steel_core_loss if project.steel_core_loss else 'No especificado'}", size=12),
                     ft.Text(f"Espesor: {project.steel_thickness if project.steel_thickness else 'No especificado'}", size=12),
                     ft.Text(f"Recubrimiento: {project.steel_coating if project.steel_coating else 'No especificado'}", size=12),
-                    ft.Text(f"Ancho de Bobina Cortada: {project.slitted_coil_width if project.slitted_coil_width else 'No especificado'}", size=12)
+                    ft.Text(f"Ancho de Slitted Coil: {project.slitted_coil_width if project.slitted_coil_width else 'No especificado'}", size=12)
                 ], expand=True)
             ]),
             
@@ -1201,32 +1197,38 @@ def create_new_project_form(page: ft.Page):
     volume_field = ft.TextField(
         label="Volumen Esperado *", 
         hint_text="Ej: 50,000 pcs/año",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.INVENTORY
     )
     price_field = ft.TextField(
         label="Precio Objetivo (USD) *", 
         hint_text="25.50",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.ATTACH_MONEY
     )
     margin_field = ft.TextField(
         label="Margen Objetivo (%)", 
         hint_text="15.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.TRENDING_UP
     )
     delivery_field = ft.TextField(
         label="Fecha de Entrega *", 
         hint_text="2024-06-30",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.SCHEDULE
     )
     contract_duration_field = ft.TextField(
         label="Duración del Contrato",
         hint_text="Ej: 3 años",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.CALENDAR_TODAY
     )
     payment_terms_field = ft.TextField(
         label="Términos de Pago",
         hint_text="Ej: 30 días neto",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.PAYMENT
     )
     
     # Technical requirements
@@ -1580,12 +1582,9 @@ def create_new_project_form(page: ft.Page):
                 tool_characteristics_pitch=float(tool_pitch_field.value) if tool_pitch_field.value else 0.0,
                 tool_characteristics_width=float(tool_width_field.value) if tool_width_field.value else 0.0,
                 tool_characteristics_cavities=int(tool_cavities_field.value) if tool_cavities_field.value else 0,
-                tool_remaining_life=int(tool_remaining_life_field.value) if tool_remaining_life_field.value else 0,
                 target_date_first_parts=target_first_parts_field.value.strip() if target_first_parts_field.value else "",
                 target_date_ppap=target_ppap_field.value.strip() if target_ppap_field.value else "",
                 target_date_sop=target_sop_field.value.strip() if target_sop_field.value else "",
-                steel_requirement_processing_type=steel_processing_type_field.value.strip() if steel_processing_type_field.value else "",
-                steel_core_loss=float(steel_core_loss_field.value) if steel_core_loss_field.value else 0.0,
                 steel_thickness=float(steel_thickness_field.value) if steel_thickness_field.value else 0.0,
                 steel_coating=steel_coating_field.value.strip() if steel_coating_field.value else "",
                 slitted_coil_width=float(slitted_coil_width_field.value) if slitted_coil_width_field.value else 0.0,
@@ -1598,7 +1597,6 @@ def create_new_project_form(page: ft.Page):
                 oee=float(oee_field.value) if oee_field.value else 0.0,
                 hours_per_shift=float(hours_per_shift_field.value) if hours_per_shift_field.value else 0.0,
                 process_area=float(process_area_field.value) if process_area_field.value else 0.0,
-                aluminum_weight=float(aluminum_weight_field.value) if aluminum_weight_field.value else 0.0,
                 glue_primer_quantity=float(glue_primer_quantity_field.value) if glue_primer_quantity_field.value else 0.0,
                 general_process_flow_description=general_process_flow_field.value.strip() if general_process_flow_field.value else "",
                 tool_raw_material=tool_raw_material_dropdown.value if tool_raw_material_dropdown.value else "",
@@ -1664,91 +1662,90 @@ def create_new_project_form(page: ft.Page):
     offer_number_field = ft.TextField(
         label="Número de Oferta",
         hint_text="Ej: OF-2024-001",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.ASSIGNMENT
     )
     technical_specs_field = ft.TextField(
         label="Especificaciones Técnicas / Revisión de Dibujo",
         hint_text="Ej: Rev. A",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.DESCRIPTION
     )
     yearly_volume_field = ft.TextField(
         label="Volumen Anual (Sets)",
         hint_text="25000",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.INVENTORY
     )
     drawings_included_field = ft.TextField(
         label="Dibujos Incluidos en la Oferta",
         hint_text="Lista de dibujos incluidos",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.INSERT_DRIVE_FILE
     )
     project_life_field = ft.TextField(
         label="Vida del Proyecto (Años)",
         hint_text="5",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.SCHEDULE
     )
     tool_provided_checkbox = ft.Checkbox(
         label="Herramienta Proporcionada por el Cliente",
         value=False
     )
     tool_pitch_field = ft.TextField(
-        label="Características de Herramienta - Pitch",
+        label="Pitch del Tool",
         hint_text="0.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.STRAIGHTEN
     )
     tool_width_field = ft.TextField(
-        label="Características de Herramienta - Ancho",
+        label="Ancho del Tool",
         hint_text="0.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.STRAIGHTEN
     )
     tool_cavities_field = ft.TextField(
-        label="Características de Herramienta - Cavidades",
+        label="Número de Cavidades",
         hint_text="0",
-        width=300
-    )
-    tool_remaining_life_field = ft.TextField(
-        label="Vida Restante de Herramienta",
-        hint_text="0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.GRID_VIEW
     )
     target_first_parts_field = ft.TextField(
-        label="Fecha Objetivo - Primeras Piezas",
+        label="Primeras Piezas",
         hint_text="2024-06-30",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.PLAY_ARROW
     )
     target_ppap_field = ft.TextField(
-        label="Fecha Objetivo - PPAP",
+        label="PPAP (Production Part Approval Process)",
         hint_text="2024-07-15",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.VERIFIED
     )
     target_sop_field = ft.TextField(
-        label="Fecha Objetivo - SOP",
+        label="SOP (Start of Production)",
         hint_text="2024-08-01",
-        width=300
-    )
-    steel_processing_type_field = ft.TextField(
-        label="Tipo de Procesamiento de Acero",
-        hint_text="Ej: Laminado en frío",
-        width=300
-    )
-    steel_core_loss_field = ft.TextField(
-        label="Pérdida de Núcleo de Acero",
-        hint_text="0.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.ROCKET_LAUNCH
     )
     steel_thickness_field = ft.TextField(
-        label="Espesor de Acero",
+        label="Espesor de Acero (mm)",
         hint_text="0.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.STRAIGHTEN
     )
     steel_coating_field = ft.TextField(
-        label="Recubrimiento de Acero",
-        hint_text="Ej: Galvanizado",
-        width=300
+        label="Tipo de Recubrimiento",
+        hint_text="Ej: Galvanizado, Fosfatado",
+        width=300,
+        prefix_icon=ft.Icons.PALETTE
     )
     slitted_coil_width_field = ft.TextField(
-        label="Ancho de Bobina Cortada",
+        label="Ancho de Slitted Coil (mm)",
         hint_text="0.0",
-        width=300
+        width=300,
+        prefix_icon=ft.Icons.STRAIGHTEN
     )
 
     # Create tabbed interface for better organization
@@ -1771,49 +1768,181 @@ def create_new_project_form(page: ft.Page):
             ], expand=True)
         ]),
         ft.Divider(),
-        ft.Text("Información General del Proyecto", size=16, weight="bold", color="#4A90E2"),
-        ft.Row([
-            ft.Column([
-                offer_number_field,
-                technical_specs_field,
-                yearly_volume_field,
-                drawings_included_field,
-                project_life_field,
-                tool_provided_checkbox
-            ], expand=True),
-            ft.Column([
-                tool_pitch_field,
-                tool_width_field,
-                tool_cavities_field,
-                tool_remaining_life_field,
-                target_first_parts_field,
-                target_ppap_field,
-                target_sop_field
-            ], expand=True),
-            ft.Column([
-                steel_processing_type_field,
-                steel_core_loss_field,
-                steel_thickness_field,
-                steel_coating_field,
-                slitted_coil_width_field
-            ], expand=True)
-        ])
+        
+        # Project Overview Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.INFO_OUTLINE, color="#4A90E2", size=20),
+                    ft.Text("Información General del Proyecto", size=16, weight="bold", color="#4A90E2")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.ASSIGNMENT, color="#6B7280", size=16),
+                                    ft.Text("Detalles del Proyecto", size=14, weight="bold", color="#374151")
+                                ]),
+                                offer_number_field,
+                                technical_specs_field,
+                                yearly_volume_field,
+                                project_life_field
+                            ], spacing=8),
+                            bgcolor="#F8F9FA",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#E5E7EB")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.DESCRIPTION, color="#6B7280", size=16),
+                                    ft.Text("Documentación", size=14, weight="bold", color="#374151")
+                                ]),
+                                drawings_included_field,
+                                tool_provided_checkbox
+                            ], spacing=8),
+                            bgcolor="#F8F9FA",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#E5E7EB")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        ),
+        
+        # Tool Characteristics Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.BUILD, color="#F5A623", size=20),
+                    ft.Text("Características de Tool", size=16, weight="bold", color="#F5A623")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SETTINGS, color="#6B7280", size=16),
+                                    ft.Text("Especificaciones Técnicas", size=14, weight="bold", color="#374151")
+                                ]),
+                                tool_pitch_field,
+                                tool_width_field,
+                                tool_cavities_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SCHEDULE, color="#6B7280", size=16),
+                                    ft.Text("Fechas Objetivo", size=14, weight="bold", color="#374151")
+                                ]),
+                                target_first_parts_field,
+                                target_ppap_field,
+                                target_sop_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        ),
+        
+        # Steel Specifications Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.CONSTRUCTION, color="#00BFA5", size=20),
+                    ft.Text("Especificaciones de Acero", size=16, weight="bold", color="#00BFA5")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Container(
+                        content=ft.Column([
+                            ft.Row([
+                                ft.Icon(ft.Icons.STRAIGHTEN, color="#6B7280", size=16),
+                                ft.Text("Propiedades del Material", size=14, weight="bold", color="#374151")
+                            ]),
+                            steel_thickness_field,
+                            steel_coating_field,
+                            slitted_coil_width_field
+                        ], spacing=8),
+                        bgcolor="#E8F5E8",
+                        padding=15,
+                        border_radius=8,
+                        border=ft.border.all(1, "#A5D6A7")
+                    )
+                ])
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
     
     commercial_tab = ft.Column([
-        ft.Text("Información Comercial", size=16, weight="bold", color="#00BFA5"),
-        ft.Row([
-            ft.Column([
-                volume_field,
-                price_field,
-                margin_field,
-                delivery_field
-            ], expand=True),
-            ft.Column([
-                contract_duration_field,
-                payment_terms_field
-            ], expand=True)
-        ])
+        # Commercial Overview Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.ATTACH_MONEY, color="#00BFA5", size=20),
+                    ft.Text("Información Comercial", size=16, weight="bold", color="#00BFA5")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.TRENDING_UP, color="#6B7280", size=16),
+                                    ft.Text("Volumen y Precios", size=14, weight="bold", color="#374151")
+                                ]),
+                                volume_field,
+                                price_field,
+                                margin_field
+                            ], spacing=8),
+                            bgcolor="#E8F5E8",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#A5D6A7")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SCHEDULE, color="#6B7280", size=16),
+                                    ft.Text("Fechas y Términos", size=14, weight="bold", color="#374151")
+                                ]),
+                                delivery_field,
+                                contract_duration_field,
+                                payment_terms_field
+                            ], spacing=8),
+                            bgcolor="#E8F5E8",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#A5D6A7")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
     
     # Engineering fields
@@ -1842,7 +1971,7 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     strokes_per_minute_field = ft.TextField(
-        label="Golpes por Minuto",
+        label="SPM vendidos",
         hint_text="0",
         width=300
     )
@@ -1857,17 +1986,12 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     process_area_field = ft.TextField(
-        label="Área de Proceso (mm²)",
-        hint_text="0.0",
-        width=300
-    )
-    aluminum_weight_field = ft.TextField(
-        label="Peso de Aluminio (kg)",
+        label="Área de láminas (mm²)",
         hint_text="0.0",
         width=300
     )
     glue_primer_quantity_field = ft.TextField(
-        label="Cantidad de Pegamento y Primario (ml)",
+        label="Cantidad de Glue (ml)",
         hint_text="0.0",
         width=300
     )
@@ -1879,7 +2003,7 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     tool_raw_material_dropdown = ft.Dropdown(
-        label="Materia Prima de Herramienta",
+        label="Material del tool",
         options=[
             ft.dropdown.Option("Acero"),
             ft.dropdown.Option("Carburo"),
@@ -1888,79 +2012,190 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     tool_life_guarantee_field = ft.TextField(
-        label="Garantía de Vida de Herramienta (Millones de Golpes)",
+        label="Golpes garantizados Tool (Millones de Golpes)",
         hint_text="0",
         width=300
     )
 
     technical_tab = ft.Column([
-        ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color="#F5A623"),
-        ft.Row([
-            ft.Column([
-                tech_requirements_field,
-                quality_requirements_field
-            ], expand=True),
-            ft.Column([
-                regulatory_requirements_field
-            ], expand=True)
-        ]),
-        ft.Divider(),
-        ft.Text("Información de Ingeniería", size=16, weight="bold", color="#F5A623"),
-        ft.Row([
-            ft.Column([
-                press_tonnage_field,
-                press_number_field,
-                production_line_field,
-                process_type_dropdown,
-                strokes_per_minute_field,
-                oee_field
-            ], expand=True),
-            ft.Column([
-                hours_per_shift_field,
-                process_area_field,
-                aluminum_weight_field,
-                glue_primer_quantity_field,
-                tool_raw_material_dropdown,
-                tool_life_guarantee_field
-            ], expand=True),
-            ft.Column([
-                general_process_flow_field
-            ], expand=True)
-        ]),
-        ft.Divider(),
-        ft.Text("Documentos Técnicos", size=16, weight="bold", color="#4A90E2"),
-        ft.Row([
-            ft.Column([
-                ft.Text("Planos 2D (PDF)", size=14, weight="bold"),
-                ft.ElevatedButton(
-                    "Seleccionar PDFs",
-                    icon=ft.Icons.PICTURE_AS_PDF,
-                    on_click=lambda e: pdf_picker.pick_files(
-                        dialog_title="Seleccionar archivos PDF",
-                        allow_multiple=True
-                    ),
-                    bgcolor="#E53E3E",
-                    color=ft.Colors.WHITE,
-                    width=200
-                ),
-                pdf_display
-            ], expand=True),
-            ft.Column([
-                ft.Text("Modelos 3D (STEP)", size=14, weight="bold"),
-                ft.ElevatedButton(
-                    "Seleccionar STEP",
-                    icon=ft.Icons.ENGINEERING,
-                    on_click=lambda e: step_picker.pick_files(
-                        dialog_title="Seleccionar archivos STEP",
-                        allow_multiple=True
-                    ),
-                    bgcolor="#4A90E2",
-                    color=ft.Colors.WHITE,
-                    width=200
-                ),
-                step_display
-            ], expand=True)
-        ])
+        # Requirements Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.ENGINEERING, color="#F5A623", size=20),
+                    ft.Text("Requisitos Técnicos y de Calidad", size=16, weight="bold", color="#F5A623")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.BUILD, color="#6B7280", size=16),
+                                    ft.Text("Especificaciones Técnicas", size=14, weight="bold", color="#374151")
+                                ]),
+                                tech_requirements_field,
+                                quality_requirements_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.VERIFIED, color="#6B7280", size=16),
+                                    ft.Text("Requisitos Regulatorios", size=14, weight="bold", color="#374151")
+                                ]),
+                                regulatory_requirements_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        ),
+        
+        # Engineering Information Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.SETTINGS, color="#F5A623", size=20),
+                    ft.Text("Información de Ingeniería", size=16, weight="bold", color="#F5A623")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.PRECISION_MANUFACTURING, color="#6B7280", size=16),
+                                    ft.Text("Configuración de Prensa", size=14, weight="bold", color="#374151")
+                                ]),
+                                press_tonnage_field,
+                                press_number_field,
+                                production_line_field,
+                                process_type_dropdown,
+                                strokes_per_minute_field,
+                                oee_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SCHEDULE, color="#6B7280", size=16),
+                                    ft.Text("Capacidad y Materiales", size=14, weight="bold", color="#374151")
+                                ]),
+                                hours_per_shift_field,
+                                process_area_field,
+                                glue_primer_quantity_field,
+                                tool_raw_material_dropdown,
+                                tool_life_guarantee_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.DESCRIPTION, color="#6B7280", size=16),
+                                    ft.Text("Descripción del Proceso", size=14, weight="bold", color="#374151")
+                                ]),
+                                general_process_flow_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        ),
+        
+        # Technical Documents Section
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.INSERT_DRIVE_FILE, color="#4A90E2", size=20),
+                    ft.Text("Documentos Técnicos", size=16, weight="bold", color="#4A90E2")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.PICTURE_AS_PDF, color="#6B7280", size=16),
+                                    ft.Text("Planos 2D (PDF)", size=14, weight="bold", color="#374151")
+                                ]),
+                                ft.ElevatedButton(
+                                    "Seleccionar PDFs",
+                                    icon=ft.Icons.PICTURE_AS_PDF,
+                                    on_click=lambda e: pdf_picker.pick_files(
+                                        dialog_title="Seleccionar archivos PDF",
+                                        allow_multiple=True
+                                    ),
+                                    bgcolor="#E53E3E",
+                                    color=ft.Colors.WHITE,
+                                    width=200
+                                ),
+                                pdf_display
+                            ], spacing=8),
+                            bgcolor="#F8F9FA",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#E5E7EB")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.ENGINEERING, color="#6B7280", size=16),
+                                    ft.Text("Modelos 3D (STEP)", size=14, weight="bold", color="#374151")
+                                ]),
+                                ft.ElevatedButton(
+                                    "Seleccionar STEP",
+                                    icon=ft.Icons.ENGINEERING,
+                                    on_click=lambda e: step_picker.pick_files(
+                                        dialog_title="Seleccionar archivos STEP",
+                                        allow_multiple=True
+                                    ),
+                                    bgcolor="#4A90E2",
+                                    color=ft.Colors.WHITE,
+                                    width=200
+                                ),
+                                step_display
+                            ], spacing=8),
+                            bgcolor="#F8F9FA",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#E5E7EB")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
     
     # Sales fields
@@ -1970,12 +2205,12 @@ def create_new_project_form(page: ft.Page):
         width=300
     )
     master_coil_width_field = ft.TextField(
-        label="Ancho de Bobina Maestra",
+        label="Ancho de Master Coil",
         hint_text="0.0",
         width=300
     )
     thickness_tolerance_field = ft.TextField(
-        label="Tolerancia de Espesor",
+        label="Tolerancia de Espesor Acero",
         hint_text="0.0",
         width=300
     )
@@ -2048,67 +2283,194 @@ def create_new_project_form(page: ft.Page):
 
     # Sales tab
     sales_tab = ft.Column([
-        ft.Text("Información de Ventas", size=16, weight="bold", color="#00BFA5"),
-        ft.Row([
-            ft.Column([
-                steel_permeability_field,
-                master_coil_width_field,
-                thickness_tolerance_field
-            ], expand=True)
-        ])
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.SHOPPING_CART, color="#00BFA5", size=20),
+                    ft.Text("Información de Ventas", size=16, weight="bold", color="#00BFA5")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Container(
+                        content=ft.Column([
+                            ft.Row([
+                                ft.Icon(ft.Icons.CONSTRUCTION, color="#6B7280", size=16),
+                                ft.Text("Propiedades del Acero", size=14, weight="bold", color="#374151")
+                            ]),
+                            steel_permeability_field,
+                            master_coil_width_field,
+                            thickness_tolerance_field
+                        ], spacing=8),
+                        bgcolor="#E8F5E8",
+                        padding=15,
+                        border_radius=8,
+                        border=ft.border.all(1, "#A5D6A7")
+                    )
+                ])
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
 
     # Quality Information tab
     quality_tab = ft.Column([
-        ft.Text("Información de Calidad", size=16, weight="bold", color="#F5A623"),
-        ft.Row([
-            ft.Column([
-                measurement_method_field,
-                gauge_equipment_cost_field,
-                laboratory_capacity_checkbox
-            ], expand=True),
-            ft.Column([
-                additional_equipment_field,
-                process_scrap_field
-            ], expand=True)
-        ])
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.VERIFIED, color="#F5A623", size=20),
+                    ft.Text("Información de Calidad", size=16, weight="bold", color="#F5A623")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SCIENCE, color="#6B7280", size=16),
+                                    ft.Text("Métodos de Medición", size=14, weight="bold", color="#374151")
+                                ]),
+                                measurement_method_field,
+                                gauge_equipment_cost_field,
+                                laboratory_capacity_checkbox
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.PRECISION_MANUFACTURING, color="#6B7280", size=16),
+                                    ft.Text("Equipos y Proceso", size=14, weight="bold", color="#374151")
+                                ]),
+                                additional_equipment_field,
+                                process_scrap_field
+                            ], spacing=8),
+                            bgcolor="#FFF8E1",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFE082")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
 
     # Toolmaker RFQ tab
     toolmaker_tab = ft.Column([
-        ft.Text("RFQ del Fabricante de Herramientas", size=16, weight="bold", color="#9C27B0"),
-        ft.Row([
-            ft.Column([
-                toolmaker_pitch_field,
-                toolmaker_width_field,
-                toolmaker_cavities_field
-            ], expand=True),
-            ft.Column([
-                toolmaker_raw_material_dropdown,
-                toolmaker_life_guarantee_field,
-                toolmaker_lead_time_field
-            ], expand=True)
-        ])
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.BUILD, color="#9C27B0", size=20),
+                    ft.Text("RFQ del Fabricante de Herramientas", size=16, weight="bold", color="#9C27B0")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.SETTINGS, color="#6B7280", size=16),
+                                    ft.Text("Especificaciones del Tool", size=14, weight="bold", color="#374151")
+                                ]),
+                                toolmaker_pitch_field,
+                                toolmaker_width_field,
+                                toolmaker_cavities_field
+                            ], spacing=8),
+                            bgcolor="#F3E5F5",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#CE93D8")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.ASSIGNMENT, color="#6B7280", size=16),
+                                    ft.Text("Material y Garantías", size=14, weight="bold", color="#374151")
+                                ]),
+                                toolmaker_raw_material_dropdown,
+                                toolmaker_life_guarantee_field,
+                                toolmaker_lead_time_field
+                            ], spacing=8),
+                            bgcolor="#F3E5F5",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#CE93D8")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
 
     team_tab = ft.Column([
-        ft.Text("Asignación de Equipos y Evaluación", size=16, weight="bold", color=ft.Colors.PURPLE),
-        ft.Row([
-            ft.Column([
-                ft.Text("Departamentos Asignados", size=14, weight="bold"),
-                dept1_dropdown,
-                dept2_dropdown,
-                dept3_dropdown
-            ], expand=True),
-            ft.Column([
-                ft.Text("Factores de Riesgo", size=14, weight="bold"),
-                new_risk_factors_container
-            ], expand=True),
-            ft.Column([
-                ft.Text("Oportunidades", size=14, weight="bold"),
-                new_opportunities_container
-            ], expand=True)
-        ])
+        ft.Container(
+            content=ft.Column([
+                ft.Row([
+                    ft.Icon(ft.Icons.GROUP, color="#9C27B0", size=20),
+                    ft.Text("Asignación de Equipos y Evaluación", size=16, weight="bold", color="#9C27B0")
+                ]),
+                ft.Divider(height=1),
+                ft.Row([
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.BUSINESS, color="#6B7280", size=16),
+                                    ft.Text("Departamentos Asignados", size=14, weight="bold", color="#374151")
+                                ]),
+                                dept1_dropdown,
+                                dept2_dropdown,
+                                dept3_dropdown
+                            ], spacing=8),
+                            bgcolor="#F3E5F5",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#CE93D8")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.WARNING, color="#6B7280", size=16),
+                                    ft.Text("Factores de Riesgo", size=14, weight="bold", color="#374151")
+                                ]),
+                                new_risk_factors_container
+                            ], spacing=8),
+                            bgcolor="#FFEBEE",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#FFCDD2")
+                        )
+                    ], expand=True),
+                    ft.Column([
+                        ft.Container(
+                            content=ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.Icons.TRENDING_UP, color="#6B7280", size=16),
+                                    ft.Text("Oportunidades", size=14, weight="bold", color="#374151")
+                                ]),
+                                new_opportunities_container
+                            ], spacing=8),
+                            bgcolor="#E8F5E8",
+                            padding=15,
+                            border_radius=8,
+                            border=ft.border.all(1, "#A5D6A7")
+                        )
+                    ], expand=True)
+                ], spacing=15)
+            ], spacing=10),
+            padding=10
+        )
     ], scroll=ft.ScrollMode.AUTO)
 
     tabs = ft.Tabs(
